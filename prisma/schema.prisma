@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  name          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  color         String?
+  avatarUrl     String?
+  backgroundUrl String?
+  tweets        Tweet[]
+  myTweets      Tweet[]   @relation("myTweets")
+  likes         Like[]
+  replys        Reply[]
+  followers     Follows[] @relation("followers")
+  following     Follows[] @relation("following")
+}
+
+model Follows {
+  id          Int  @id @default(autoincrement())
+  follower    User @relation("followers", fields: [followerId], references: [id])
+  followerId  Int
+  following   User @relation("following", fields: [followingId], references: [id])
+  followingId Int
+
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Tweet {
+  id          Int      @id @default(autoincrement())
+  text        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  createdBy   User     @relation("myTweets", fields: [createdById], references: [id])
+  createdById Int
+  imageUrl    String?
+  views       Int      @default(0)
+  likes       Like[]
+  replys      Reply[]
+
+  @@index([userId], name: "userId")
+  @@index([createdById], name: "createdById")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+  tweetId   Int
+
+  @@index([userId], name: "userId")
+  @@index([tweetId], name: "tweetId")
+}
+
+model Reply {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
+  tweetId   Int
+
+  @@index([userId], name: "userId")
+  @@index([tweetId], name: "tweetId")
+}
