@@ -28,7 +28,7 @@ export default function Layout({
 
         <div className="p-5 my-3 border w-full text-sm text-black text-center font-medium dark:text-gray-300 dark:font-semibold">
           {isLogin ? "계정이 없으신가요?" : "이미 계정이 있으신가요?"}{" "}
-          <Link href={isLogin ? "/create-account" : "log-in"}>
+          <Link href={isLogin ? "/register" : "login"}>
             <button className="text-[#1C9BEF] cursor-pointer">
               {isLogin ? "가입하기" : "로그인"}
             </button>

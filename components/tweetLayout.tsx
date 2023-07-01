@@ -28,7 +28,7 @@ const Layout = ({
   actionBtn,
 }: LayoutProps) => {
   const router = useRouter();
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
   const handleBack = () => {
     router.back();
   };
@@ -43,16 +43,17 @@ const Layout = ({
   return (
     <div className="w-full min-h-screen flex">
       <Head>
-        <title>{title}</title>
+        <title> Instagram</title>
         <link
+          data-default-icon="https://static.cdninstagram.com/rsrc.php/yv/r/BTPhT6yIYfq.ico"
           rel="shortcut icon"
-          href="https://abs.twimg.com/favicons/twitter.2.ico"
           type="image/x-icon"
-        />
+          href="https://static.cdninstagram.com/rsrc.php/yv/r/BTPhT6yIYfq.ico"
+        ></link>
       </Head>
 
       {sideBar && (
-        <div className="flex flex-col  gap-7 border-r w-[14%]  p-1 py-3  items-center dark:border-r-[#181818]">
+        <div className="fixed bottom-0 w-full flex z-10 justify-between bg-white   gap-7 border-r px-10 py-3  border-t  items-center dark:border-r-[#181818]">
           <Link href="/">
             <FaTwitter className="w-7 h-7 cursor-pointer fill-[#1C9BEF] dark:fill-white" />
           </Link>
@@ -62,15 +63,11 @@ const Layout = ({
           <Link href="/profile">
             <FaUserAlt className="w-6 h-6 cursor-pointer" />
           </Link>
-          {/* <IoLogOut
-          onClick={handleLogout}
-          className="ml-1 w-8 h-8 cursor-pointer"
-        /> */}
 
           <Avatar size="10" user={user} />
         </div>
       )}
-      <div className={sideBar ? "w-[86%]" : "w-full"}>
+      <div className={"w-full"}>
         <div className="mb-3 px-4 py-3 flex items-center">
           {!isHome && (
             <button className="mr-10" onClick={handleBack}>

@@ -80,3 +80,30 @@ model Reply {
   @@index([userId], name: "userId")
   @@index([tweetId], name: "tweetId")
 }
+
+// pscale 유료버전 안 쓰기 위해서 같은 디비 사용
+model InstagramUser {
+  id            Int                @id @default(autoincrement())
+  email         String             @unique
+  name          String
+  username      String             @unique
+  password      String
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  color         String?
+  avatarUrl     String?
+  backgroundUrl String?
+  followers     InstagramFollows[] @relation("followers")
+  following     InstagramFollows[] @relation("following")
+}
+
+model InstagramFollows {
+  id          Int           @id @default(autoincrement())
+  follower    InstagramUser @relation("followers", fields: [followerId], references: [id])
+  followerId  Int
+  following   InstagramUser @relation("following", fields: [followingId], references: [id])
+  followingId Int
+
+  @@index([followerId])
+  @@index([followingId])
+}

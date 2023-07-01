@@ -19,22 +19,23 @@ interface MutationResult {
 const Login = () => {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
-  const { register, handleSubmit, getValues } = useForm<IForm>();
-
+  const { register, handleSubmit, formState } = useForm<IForm>();
   const [login, { loading, data }] = useMutation<MutationResult>("/api/login");
   const submitting = async (validForm: IForm) => {
     if (loading) return;
     await login(validForm);
   };
 
+  const setErrorWithTimeout = (errorMessage: string) => {
+    setError(errorMessage);
+    setTimeout(() => {
+      setError(null);
+    }, 3000);
+  };
+
   useEffect(() => {
-    if (data && data.ok) {
-      router.push("/");
-    } else {
-      if (data && data.error) setError(data.error);
-      setTimeout(() => {
-        setError(null);
-      }, 3000);
+    if (data) {
+      data.ok ? router.push("/") : setErrorWithTimeout(data.error);
     }
   }, [data]);
 
@@ -68,9 +69,6 @@ const Login = () => {
               type="email"
               name="email"
               id="email"
-              value={
-                router.query.email ? router.query.email : getValues("email")
-              }
             />
           </label>{" "}
           <label htmlFor="password">
@@ -86,13 +84,14 @@ const Login = () => {
               type="password"
               name="password"
               id="password"
-              value={
-                router.query.email ? router.query.email : getValues("password")
-              }
             />
           </label>
         </div>
-        <button className="w-full p-1.5 mt-4 rounded-lg bg-[#67B5FA] text-white font-bold text-md dark:bg-white dark:text-black">
+        <button
+          className={`w-full p-1.5 mt-4 rounded-lg ${
+            formState.isValid ? "bg-[#0095F6]" : "bg-[#67B5FA]"
+          }  text-white font-bold text-sm dark:bg-white dark:text-black`}
+        >
           로그인
         </button>
         <div className="w-full grid grid-cols-10 place-items-center my-2">
@@ -122,6 +121,14 @@ const Login = () => {
             ></path>
           </svg>
           Github 계정으로 로그인
+        </Link>
+        <Link
+          type="button"
+          href="/api/auth/google/start"
+          className="text-[#385898] flex justify-center items-center text-xs gap-2 rounded-3xl my-3 w-full cursor-pointer placeholder:text-gray-600 focus:outline-none  dark:text-white"
+          placeholder="이메일 주소"
+        >
+          비밀번호를 잊으셨나요?
         </Link>
       </form>
     </Layout>

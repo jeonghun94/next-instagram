@@ -5,11 +5,12 @@ import useMutation from "../lib/client/useMutation";
 import Layout from "../components/layout";
 import Link from "next/link";
 import Head from "next/head";
-
 import { AiFillFacebook } from "react-icons/ai";
 
 interface IForm {
   email: string;
+  name: string;
+  username: string;
   password: string;
 }
 
@@ -21,22 +22,24 @@ interface MutationResult {
 const Login = () => {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
-  const { register, handleSubmit, getValues } = useForm<IForm>();
-
-  const [login, { loading, data }] = useMutation<MutationResult>("/api/login");
+  const { register, handleSubmit, formState } = useForm<IForm>();
+  const [registerUser, { loading, data }] =
+    useMutation<MutationResult>("/api/register");
   const submitting = async (validForm: IForm) => {
     if (loading) return;
-    await login(validForm);
+    await registerUser(validForm);
+  };
+
+  const setErrorWithTimeout = (errorMessage: string) => {
+    setError(errorMessage);
+    setTimeout(() => {
+      setError(null);
+    }, 3000);
   };
 
   useEffect(() => {
-    if (data && data.ok) {
-      router.push("/");
-    } else {
-      if (data && data.error) setError(data.error);
-      setTimeout(() => {
-        setError(null);
-      }, 3000);
+    if (data) {
+      data.ok ? router.push("/login") : setErrorWithTimeout(data.error);
     }
   }, [data]);
 
@@ -86,45 +89,36 @@ const Login = () => {
               type="email"
               name="email"
               id="email"
-              value={
-                router.query.email ? router.query.email : getValues("email")
-              }
             />
           </label>{" "}
-          <label htmlFor="password">
+          <label htmlFor="name">
             <input
-              {...register("password", {
+              {...register("name", {
                 required: {
                   value: true,
-                  message: "Email is required",
+                  message: "name is required",
                 },
               })}
               className="text-xs border bg-[#FAFAFA] border-gray-300 rounded-[2px] p-3 w-full placeholder:text-gray-600 placeholder:bg-[#FAFAFA] focus:outline-none "
               placeholder="성명"
-              type="password"
-              name="password"
-              id="password"
-              value={
-                router.query.email ? router.query.email : getValues("password")
-              }
+              type="name"
+              name="name"
+              id="name"
             />
           </label>
-          <label htmlFor="password">
+          <label htmlFor="username">
             <input
-              {...register("password", {
+              {...register("username", {
                 required: {
                   value: true,
-                  message: "Email is required",
+                  message: "username is required",
                 },
               })}
               className="text-xs border bg-[#FAFAFA] border-gray-300 rounded-[2px] p-3 w-full placeholder:text-gray-600 placeholder:bg-[#FAFAFA] focus:outline-none "
               placeholder="사용자 이름"
-              type="password"
-              name="password"
-              id="password"
-              value={
-                router.query.email ? router.query.email : getValues("password")
-              }
+              type="username"
+              name="username"
+              id="username"
             />
           </label>
           <label htmlFor="password">
@@ -132,7 +126,7 @@ const Login = () => {
               {...register("password", {
                 required: {
                   value: true,
-                  message: "Email is required",
+                  message: "password is required",
                 },
               })}
               className="text-xs border bg-[#FAFAFA] border-gray-300 rounded-[2px] p-3 w-full placeholder:text-gray-600 placeholder:bg-[#FAFAFA] focus:outline-none "
@@ -140,9 +134,6 @@ const Login = () => {
               type="password"
               name="password"
               id="password"
-              value={
-                router.query.email ? router.query.email : getValues("password")
-              }
             />
           </label>
           <p className="text-xs text-[#777] font-medium">
@@ -152,7 +143,11 @@ const Login = () => {
           </p>
         </div>
 
-        <button className="w-full p-1.5 mt-4 rounded-lg bg-[#67B5FA] text-white font-bold text-md dark:bg-white dark:text-black">
+        <button
+          className={`w-full p-1.5 mt-4 rounded-lg ${
+            formState.isValid ? "bg-[#0095F6]" : "bg-[#67B5FA]"
+          }  text-white font-bold text-sm dark:bg-white dark:text-black`}
+        >
           가입
         </button>
       </form>
