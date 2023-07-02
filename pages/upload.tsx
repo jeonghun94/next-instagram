@@ -5,7 +5,7 @@ import { ITweets } from ".";
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Avatar from "@/components/user/avartar";
+import Avatar from "@/components/user/avatar";
 
 interface IForm {
   text: string;

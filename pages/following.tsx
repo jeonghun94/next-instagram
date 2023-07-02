@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import useUser from "../lib/client/useUser";
-import Layout from "../components/tweetLayout";
+import Layout from "../components/HomeLayout";
 import Tweets from "../components/tweets";
 import { ITweets } from ".";
 import Upload from "./upload";

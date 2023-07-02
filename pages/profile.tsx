@@ -1,12 +1,12 @@
 import useUser from "../lib/client/useUser";
 import { Tweet, User } from "@prisma/client";
-import Layout from "../components/tweetLayout";
+import Layout from "../components/HomeLayout";
 import { AiFillCalendar } from "react-icons/ai";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { capitalizeFirstLetter } from "@/lib/client/utils";
-import Avatar from "@/components/user/avartar";
+import Avatar from "@/components/user/avatar";
 // import Image from "next/image";
 
 export interface IForm {

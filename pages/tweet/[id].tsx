@@ -1,7 +1,7 @@
 import { NextPageContext } from "next";
 import { Reply, Tweet, User } from "@prisma/client";
 import client from "../../lib/server/db";
-import Layout from "../../components/tweetLayout";
+import Layout from "../../components/HomeLayout";
 import { set, useForm } from "react-hook-form";
 import TweetImage from "../../components/tweetImage";
 import useMutation from "../../lib/client/useMutation";

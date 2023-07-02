@@ -3,7 +3,7 @@ import { convertTime } from "../lib/client/utils";
 import { ITweets } from "../pages";
 import TweetImage from "./tweetImage";
 import { FiMessageCircle, FiHeart, FiEye } from "react-icons/fi";
-import Avatar from "./user/avartar";
+import Avatar from "./user/avatar";
 
 export default function Tweets({ tweets }: ITweets) {
   return tweets?.length > 0 ? (

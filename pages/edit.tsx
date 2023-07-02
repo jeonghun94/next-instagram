@@ -4,7 +4,7 @@ import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import useUser from "../lib/client/useUser";
 import useMutation from "../lib/client/useMutation";
-import Layout from "../components/tweetLayout";
+import Layout from "../components/HomeLayout";
 import { BsCamera } from "react-icons/bs";
 import { useRouter } from "next/router";
 

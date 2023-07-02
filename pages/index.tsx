@@ -2,8 +2,7 @@ import useSWR from "swr";
 import useUser from "../lib/client/useUser";
 import { Tweet, User } from "@prisma/client";
 import Tweets from "../components/tweets";
-import Layout from "../components/tweetLayout";
-import Upload from "./upload";
+import Layout from "../components/HomeLayout";
 
 export interface ITweets {
   ok?: boolean;
@@ -19,20 +18,14 @@ interface TweetWithUser extends Tweet {
 
 const Home = () => {
   const { isLoading } = useUser();
-  const { data } = useSWR<ITweets>("/api/tweet");
 
   return isLoading ? (
     <div className="min-h-screen w-full flex justify-center items-center">
       <h1>Loading</h1>
     </div>
   ) : (
-    <Layout isHome pageTitle="Home" subTitle="Home">
-      <Upload />
-      {data && data.tweets?.length > 0 ? (
-        <Tweets tweets={data.tweets} />
-      ) : (
-        <h1 className="text-center text-sm m-5">No Tweets.</h1>
-      )}
+    <Layout isHome>
+      <h1>hi</h1>
     </Layout>
   );
 };
