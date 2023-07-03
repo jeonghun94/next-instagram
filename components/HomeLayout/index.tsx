@@ -42,10 +42,9 @@ const Layout = ({
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col">
+    <div className="w-full min-h-screen flex flex-col ">
       <CustomHead pageTitle={pageTitle} />
-
-      <div className="mb-3 px-4 py-4 flex items-center border-b border-gray-250">
+      <div className="px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white">
         {isHome ? (
           <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
         ) : (
@@ -59,7 +58,7 @@ const Layout = ({
 
       {children}
 
-      <div className="fixed bottom-0 w-full flex z-10 justify-between bg-white  border-r px-10 py-3  border-t  items-center dark:border-r-[#181818]">
+      <div className="sticky bottom-0 left-0 z-10 w-full flex justify-between items-center border-t bg-white px-10 py-3">
         <Link href="/">
           <AiFillHome className="w-7 h-7" />
         </Link>
