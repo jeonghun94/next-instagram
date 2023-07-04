@@ -7,10 +7,10 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const profile = await client.user.findUnique({
+  const profile = await client.instagramUser.findUnique({
     where: { id: req.session.user?.id },
     include: {
-      tweets: true,
+      // tweets: true,
       _count: true,
     },
   });

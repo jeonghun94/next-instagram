@@ -4,7 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { AiFillHome } from "react-icons/ai";
 import { IoLogOut } from "react-icons/io5";
 import { FaUserAlt, FaTwitter } from "react-icons/fa";
-
+import { BiLeftArrowAlt } from "react-icons/bi";
 import { ImCompass2 } from "react-icons/im";
 import { CgAddR } from "react-icons/cg";
 
@@ -37,6 +37,8 @@ const Layout = ({
     router.back();
   };
 
+  console.log(user);
+
   const handleLogout = () => {
     fetch("/api/logout").then(() => (window.location.href = "/"));
   };
@@ -44,7 +46,9 @@ const Layout = ({
   return (
     <div className="w-full min-h-screen flex flex-col ">
       <CustomHead pageTitle={pageTitle} />
-      <div className="px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white">
+      <div
+        className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white`}
+      >
         {isHome ? (
           <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
         ) : (
@@ -52,13 +56,13 @@ const Layout = ({
             <FaArrowLeft />
           </button>
         )}
-        <p className="font-semibold text-xl">{subTitle}</p>
+        {subTitle && subTitle}
         {actionBtn && <div className="ml-auto">{actionBtn}</div>}
       </div>
 
       {children}
 
-      <div className="sticky bottom-0 left-0 z-10 w-full flex justify-between items-center border-t bg-white px-10 py-3">
+      <div className="fixed bottom-0 left-0 right-0 max-w-lg w-full m-auto flex justify-between items-center border-t bg-white px-10 py-3">
         <Link href="/">
           <AiFillHome className="w-7 h-7" />
         </Link>
@@ -71,7 +75,9 @@ const Layout = ({
         <Link href="/profile">
           <IoPaperPlaneOutline className="w-7 h-7 " />
         </Link>
-        <Avatar size="6" user={user} />
+        <Link href="/profile">
+          <Avatar size="6" user={user} />
+        </Link>
       </div>
     </div>
   );

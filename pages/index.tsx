@@ -2,6 +2,7 @@ import useUser from "@/lib/client/useUser";
 import Layout from "@/components/HomeLayout";
 import Stories from "@/components/Stories/inedex";
 import Feed from "@/components/Feed";
+import DD from "@/components/dd";
 
 const Home = () => {
   const { isLoading } = useUser();

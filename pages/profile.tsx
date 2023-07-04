@@ -1,13 +1,12 @@
 import useUser from "../lib/client/useUser";
 import { Tweet, User } from "@prisma/client";
 import Layout from "../components/HomeLayout";
-import { AiFillCalendar } from "react-icons/ai";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { capitalizeFirstLetter } from "@/lib/client/utils";
+import { BsGrid3X3, BsBookmark, BsPerson, BsCamera } from "react-icons/bs";
+import { AiOutlinePlus } from "react-icons/ai";
 import Avatar from "@/components/user/avatar";
-// import Image from "next/image";
 
 export interface IForm {
   text: string;
@@ -30,30 +29,33 @@ const UserTweets = dynamic(() => import("@/components/user/tweets"), {
   loading: () => <p>Loading...</p>,
 });
 
-const UserReplies = dynamic(() => import("@/components/user/replies"), {
-  loading: () => <p>Loading...</p>,
-});
-
-const UserLikes = dynamic(() => import("@/components/user/likes"), {
-  loading: () => <p>Loading...</p>,
-});
-
 const Profile = () => {
   const { user, isLoading } = useUser();
-  const [tabMenu, setTabMenu] = useState<string>("tweets");
-
-  const handleTabMenu = (e: any) => {
-    const { tabMenu } = e.target.dataset;
-    setTabMenu(tabMenu);
-  };
-
   const subTitle = () => {
     return (
-      <div className="flex flex-col ml-3 items-start ">
-        <h1 className="text-lg font-bold">{user?.name}</h1>
-        <span className="text-xs text-gray-500">
-          {user?._count.tweets} Tweets
-        </span>
+      <div className="flex flex-col items-start ">
+        <h1 className="text-lg font-semibold text-center">{user?.username}</h1>
+      </div>
+    );
+  };
+
+  const Story = ({ text, isNew }: { text: string; isNew?: boolean }) => {
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <div
+          className={`${
+            isNew ? "bg-[#FAFAFA]" : ""
+          }  w-12 h-12 aspect-square border ring-1 ring-gray-300 ring-offset-1 rounded-full`}
+        >
+          {isNew && (
+            <div className="w-full h-full flex justify-center items-center">
+              <button type="button">
+                <AiOutlinePlus className="w-6 h-6 text-gray-400" />
+              </button>
+            </div>
+          )}
+        </div>
+        <p className="text-xs">{text}</p>
       </div>
     );
   };
@@ -65,54 +67,72 @@ const Profile = () => {
   ) : (
     <Layout isHome={false} pageTitle="Profile" subTitle={subTitle()}>
       <div>
-        <div className="w-full h-36 bg-[#333639]"></div>
-        <div className=" w-full flex items-center justify-between p-2">
-          <Avatar user={user} size={"28"} isTop={true} />
-
-          <Link
-            href="/edit"
-            className="w-1.5/5 h-10  flex items-center text-sm px-2 rounded-3xl border font-bold hover:opacity-[0.8]"
-          >
-            Edit profile
-          </Link>
+        <div className="w-full flex items-center gap-5 p-2">
+          <Avatar user={user} size={"20"} />
+          <div className="w-full flex flex-col gap-3">
+            <p className="text-xl font-normal">{user.username}</p>
+            <Link
+              href="/edit"
+              className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
+            >
+              프로필 편집
+            </Link>
+          </div>
         </div>
-        <div className="h-atuo px-5">
-          <p className="text-2xl  font-semibold">{user.name}</p>
-          <p className="text-gray-400">{user.email}</p>
-          <p className="flex items-center gap-1 text-gray-400">
-            <AiFillCalendar /> Joined {user.createdAt.split("T")[0]}
-          </p>
-          <p className="flex items-center gap-3 text-gray-400">
-            <span>
-              <strong className="text-white">{user?._count?.following}</strong>{" "}
-              Following
-            </span>
-            <span>
-              <strong className="text-white">{user?._count?.followers}</strong>{" "}
-              Followers
-            </span>
-          </p>
-          <div className="flex justify-between w-full h-auto px-4 border-b  mt-4 dark:border-b-[#282828]">
-            {["tweets", "replies", "likes"].map((tab, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="relative flex flex-col justify-between pb-3  cursor-pointer"
-                  data-tab-menu={tab}
-                  onClick={handleTabMenu}
-                >
-                  {capitalizeFirstLetter(tab)}
-                  {tabMenu === tab && (
-                    <div className="absolute h-1 bottom-0 w-full bg-[#1C9BEF] rounded-md"></div>
-                  )}
-                </div>
-              );
-            })}
+        <div className="h-atuo mt-3 px-3">
+          <p className="text-sm  font-semibold">{user.name}</p>
+        </div>
+        <div className="flex items-center gap-4 mt-5 px-2">
+          <Story text={"오사카"} />
+          <Story text={"후쿠오카"} />
+          <Story text={"도쿄"} />
+          <Story text={"신규"} isNew />
+        </div>
+        <div className="w-full mt-3 py-2 flex justify-around border-t">
+          <div className="flex flex-col items-center">
+            <p className="text-sm text-gray-500">게시물</p>
+            <p className="text-sm font-semibold">0</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-sm text-gray-500">팔로워</p>
+            <p className="text-sm font-semibold">217</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-sm text-gray-500">팔로우</p>
+            <p className="text-sm font-semibold">178</p>
+          </div>
+        </div>
+
+        <div className="w-full  flex justify-around ">
+          <div className="flex flex-col items-center py-3 border-t border-black w-full">
+            <p className="text-sm text-gray-500">
+              {<BsGrid3X3 className="w-4 h-4 text-[#0095F6]" />}
+            </p>
+          </div>
+          <div className="flex flex-col items-center py-3 border-t w-full">
+            <p className="text-sm text-gray-500">
+              {<BsBookmark className="w-4 h-4" />}
+            </p>
+          </div>
+          <div className="flex flex-col items-center py-3 border-t w-full">
+            {<BsPerson className="w-4 h-4" />}
+          </div>
+        </div>
+
+        <div className="w-full h-auto flex flex-col justify-center items-center gap-3 mt-16">
+          <div className="w-auto h-auto p-3 aspect-square border-[1.5px] border-black rounded-full">
+            <BsCamera className="w-10 h-10" />
           </div>
 
-          {tabMenu === "tweets" && <UserTweets />}
-          {tabMenu === "replies" && <UserReplies />}
-          {tabMenu === "likes" && <UserLikes />}
+          <h1 className="text-3xl font-bold">사진 공유</h1>
+
+          <h3 className="text-sm text-gray-500 font-semibold">
+            사진을 공유하면 회원님의 프로필에 표시됩니다.
+          </h3>
+
+          <h3 className="text-sm text-[#0095F6] font-semibold">
+            첫 사진 공유하기
+          </h3>
         </div>
       </div>
     </Layout>
