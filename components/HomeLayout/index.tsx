@@ -22,6 +22,7 @@ interface LayoutProps {
   children: React.ReactNode;
   pageTitle?: string;
   isHome?: boolean;
+  header?: boolean;
 }
 
 const Layout = ({
@@ -30,6 +31,7 @@ const Layout = ({
   subTitle,
   pageTitle,
   actionBtn,
+  header = true,
 }: LayoutProps) => {
   const router = useRouter();
   const { user } = useUser();
@@ -45,20 +47,24 @@ const Layout = ({
 
   return (
     <div className="w-full min-h-screen flex flex-col ">
-      <CustomHead pageTitle={pageTitle} />
-      <div
-        className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white`}
-      >
-        {isHome ? (
-          <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
-        ) : (
-          <button className="mr-10" onClick={handleBack}>
-            <FaArrowLeft />
-          </button>
-        )}
-        {subTitle && subTitle}
-        {actionBtn && <div className="ml-auto">{actionBtn}</div>}
-      </div>
+      {header && (
+        <>
+          <CustomHead pageTitle={pageTitle} />
+          <div
+            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white`}
+          >
+            {isHome ? (
+              <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
+            ) : (
+              <button className="mr-10" onClick={handleBack}>
+                <FaArrowLeft />
+              </button>
+            )}
+            {subTitle && subTitle}
+            {actionBtn && <div className="ml-auto">{actionBtn}</div>}
+          </div>
+        </>
+      )}
 
       {children}
 
@@ -66,13 +72,13 @@ const Layout = ({
         <Link href="/">
           <AiFillHome className="w-7 h-7" />
         </Link>
-        <Link href="/">
+        <Link href="/search">
           <ImCompass2 className="w-6 h-6" />
         </Link>
         <Link href="/profile">
           <CgAddR className="w-6 h-6 " />
         </Link>
-        <Link href="/profile">
+        <Link href="/chat">
           <IoPaperPlaneOutline className="w-7 h-7 " />
         </Link>
         <Link href="/profile">
