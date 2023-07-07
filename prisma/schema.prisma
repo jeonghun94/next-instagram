@@ -95,6 +95,9 @@ model InstagramUser {
   backgroundUrl String?
   followers     InstagramFollows[] @relation("followers")
   following     InstagramFollows[] @relation("following")
+  feeds         InstagramFeed[]
+  likes         InstagramLike[]
+  replys        InstagramReply[]
 }
 
 model InstagramFollows {
@@ -106,4 +109,46 @@ model InstagramFollows {
 
   @@index([followerId])
   @@index([followingId])
+}
+
+model InstagramFeed {
+  id        Int              @id @default(autoincrement())
+  text      String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      InstagramUser    @relation(fields: [userId], references: [id])
+  userId    Int
+  imageUrl  String?
+  views     Int              @default(0)
+  likes     InstagramLike[]
+  replys    InstagramReply[]
+
+  @@index([userId], name: "userId")
+}
+
+model InstagramLike {
+  id        Int           @id @default(autoincrement())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      InstagramUser @relation(fields: [userId], references: [id])
+  userId    Int
+  feed      InstagramFeed @relation(fields: [feedId], references: [id])
+  feedId    Int
+
+  @@index([userId], name: "userId")
+  @@index([feedId], name: "feedId")
+}
+
+model InstagramReply {
+  id        Int           @id @default(autoincrement())
+  text      String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      InstagramUser @relation(fields: [userId], references: [id])
+  userId    Int
+  feed      InstagramFeed @relation(fields: [feedId], references: [id])
+  feedId    Int
+
+  @@index([userId], name: "userId")
+  @@index([feedId], name: "feedId")
 }
