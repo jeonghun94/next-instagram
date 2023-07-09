@@ -90,21 +90,19 @@ const Login = () => {
         <button
           className={`w-full p-1.5 mt-4 rounded-lg ${
             formState.isValid ? "bg-[#0095F6]" : "bg-[#67B5FA]"
-          }  text-white font-bold text-sm dark:bg-white dark:text-black`}
+          }  text-white font-bold text-sm`}
         >
           로그인
         </button>
         <div className="w-full grid grid-cols-10 place-items-center my-2">
           <div className="w-full col-span-4 h-1 border-b border-gray-300 divide-x-2"></div>
-          <span className="col-span-2 text-sm text-center  dark:font-semibold">
-            또는
-          </span>
+          <span className="col-span-2 text-sm text-center">또는</span>
           <div className="w-full col-span-4 h-1 border-b border-gray-300 divide-x-2"></div>
         </div>
         <Link
           type="button"
           href="/api/auth/github/start"
-          className="flex justify-center items-center text-sm gap-2 rounded-3xl p-1 w-full cursor-pointer placeholder:text-gray-600 focus:outline-none  dark:bg-white dark:text-black"
+          className="flex justify-center items-center text-sm gap-2 rounded-3xl p-1 w-full cursor-pointer placeholder:text-gray-600 focus:outline-none "
           placeholder="이메일 주소"
         >
           <svg
@@ -125,7 +123,7 @@ const Login = () => {
         <Link
           type="button"
           href="/api/auth/google/start"
-          className="text-[#385898] flex justify-center items-center text-xs gap-2 rounded-3xl my-3 w-full cursor-pointer placeholder:text-gray-600 focus:outline-none  dark:text-white"
+          className="text-[#385898] flex justify-center items-center text-xs gap-2 rounded-3xl my-3 w-full cursor-pointer placeholder:text-gray-600 focus:outline-none  "
           placeholder="이메일 주소"
         >
           비밀번호를 잊으셨나요?

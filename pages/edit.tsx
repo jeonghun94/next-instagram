@@ -128,7 +128,7 @@ const EditProfile: NextPage = () => {
                     htmlFor="picture"
                     className="flex items-center cursor-pointer p-1 h-32  border-gray-300 rounded-full shadow-sm text-xs  text-gray-700"
                   >
-                    <BsCamera className="w-5 h-5 dark:text-white" />
+                    <BsCamera className="w-5 h-5" />
                     <input
                       {...register("avatar")}
                       id="picture"
@@ -140,22 +140,8 @@ const EditProfile: NextPage = () => {
                 </div>
               </div>
             )}
-            {/* <div className="w-full box-border p-3">
-              <div className="flex flex-col border py-2 px-3 rounded-md dark:border-[#181818]">
-                <span className="text-sm text-gray-400">Name</span>
-                <input
-                  {...register("name", {
-                    required: "Name is required",
-                  })}
-                  className="w-full h-8 rounded-md  bg-transparent border-transparent outline-none "
-                  type="text"
-                  onFocus={(e) => e.target.select()}
-                  defaultValue={user?.name}
-                />
-              </div>
-            </div> */}
             <div className="w-full box-border p-3 group ">
-              <label className="flex flex-col border py-2 px-3 rounded-md dark:border-[#181818]">
+              <label className="flex flex-col border py-2 px-3 rounded-md ">
                 <span className="text-sm text-gray-400">Name</span>
                 <input
                   {...register("name", {

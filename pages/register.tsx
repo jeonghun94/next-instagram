@@ -69,9 +69,7 @@ const Login = () => {
 
         <div className="w-full grid grid-cols-10 place-items-center my-2">
           <div className="w-full col-span-4 h-1 border-b border-gray-300 divide-x-2"></div>
-          <span className="col-span-2 text-sm text-center  dark:font-semibold">
-            또는
-          </span>
+          <span className="col-span-2 text-sm text-center  ">또는</span>
           <div className="w-full col-span-4 h-1 border-b border-gray-300 divide-x-2"></div>
         </div>
 
@@ -146,7 +144,7 @@ const Login = () => {
         <button
           className={`w-full p-1.5 mt-4 rounded-lg ${
             formState.isValid ? "bg-[#0095F6]" : "bg-[#67B5FA]"
-          }  text-white font-bold text-sm dark:bg-white dark:text-black`}
+          }  text-white font-bold text-sm`}
         >
           가입
         </button>

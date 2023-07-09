@@ -90,7 +90,7 @@ const Upload = () => {
 
   return (
     <>
-      <div className="w-full px-4 py-3  border-b dark:border-b-[#181818]">
+      <div className="w-full px-4 py-3  border-b">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex items-start gap-2 "
@@ -185,7 +185,7 @@ const Upload = () => {
               </div>
             ) : null}
             <button
-              className={`place-self-end px-4 py-2 text-sm  text-white rounded-3xl bg-[#1C9BEF] dark:font-semibold hover:opacity-[0.8] ${
+              className={`place-self-end px-4 py-2 text-sm  text-white rounded-3xl bg-[#1C9BEF] hover:opacity-[0.8] ${
                 loading ? "cursor-not-allowed opacity-2" : ""
               } `}
               disabled={loading}

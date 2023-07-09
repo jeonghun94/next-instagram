@@ -10,7 +10,7 @@ export default function Tweets({ tweets }: ITweets) {
     <>
       {tweets.map((tweet, idx) => (
         <Link href={`/tweet/${tweet.id}`} key={idx}>
-          <div className="w-full px-4 py-3 border-b cursor-pointer dark:border-b-[#181818] ">
+          <div className="w-full px-4 py-3 border-b cursor-pointer ">
             <div className="flex items-start gap-3 ">
               <Avatar user={tweet.user} size={"10"} />
 

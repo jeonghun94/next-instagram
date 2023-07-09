@@ -3,11 +3,12 @@ import { FaArrowLeft } from "react-icons/fa";
 
 import React, { useEffect, useState } from "react";
 import CustomHead from "../CustomHead";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import Image from "next/image";
 
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import BottomTabBar from "../BottomTabBar";
+import useMutation from "@/lib/client/useMutation";
 
 interface LayoutProps {
   subTitle?: string | React.ReactNode;
@@ -25,7 +26,7 @@ export const ModalOverlay = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { register, watch, handleSubmit } = useForm();
+  const { register, watch, handleSubmit, setValue } = useForm<IForm>();
 
   const photo = watch("photo");
   const [photos, setPhotos] = useState(0);
@@ -55,9 +56,45 @@ export const ModalOverlay = ({
     }
   };
 
-  const onValid = (data: any) => {
-    console.log(data, "ㅇㄴㅇㄴㅇㄴㅇ");
-    return;
+  interface MutationResult {
+    ok: boolean;
+  }
+
+  interface IForm {
+    text: string;
+    photo?: FileList;
+  }
+  const [feed, { data, loading }] = useMutation<MutationResult>("/api/feed");
+
+  const onSubmit = async ({ text, photo }: IForm) => {
+    if (loading) return;
+    const photoIds = [];
+
+    if (photo && photo.length > 0) {
+      // setImageLoading(true);
+      for (let i = 0; i < photo.length; i++) {
+        const form = new FormData();
+        const { uploadURL } = await (await fetch(`/api/files`)).json();
+        form.append("file", photo[i], text);
+        const {
+          result: { id },
+        } = await (
+          await fetch(uploadURL, { method: "POST", body: form })
+        ).json();
+        photoIds.push(id);
+        // setImageLoading(false);
+      }
+    }
+
+    feed({
+      text,
+      photoId: photoIds.join(","),
+    });
+
+    setValue("text", "");
+    setPhotoPreview("");
+    setImageIndex(0);
+    setPhotos(0);
   };
 
   return (
@@ -73,7 +110,7 @@ export const ModalOverlay = ({
     ${isOpen ? "block" : "hidden"}
   `}
       >
-        <form onSubmit={handleSubmit(onValid)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-center border-b py-2">새 게시물 만들기</h1>
           <div className=" flex flex-col items-center">
             {/* 이미지 박스 */}
@@ -144,7 +181,10 @@ export const ModalOverlay = ({
             </label>
             <textarea
               {...register("text", {
-                required: true,
+                required: {
+                  value: true,
+                  message: "Please enter your text",
+                },
               })}
               className="w-full h-20  resize-none outline-none p-2"
               placeholder="문구 입력..."
@@ -181,7 +221,7 @@ const Layout = ({
         <>
           <CustomHead pageTitle={pageTitle} />
           <div
-            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white`}
+            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white z-10`}
           >
             {isHome ? (
               <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
