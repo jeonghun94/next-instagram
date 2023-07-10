@@ -58,7 +58,7 @@ const Profile = () => {
     <Layout isHome={false} pageTitle="Profile" subTitle={subTitle()}>
       <div>
         <div className="w-full flex items-center gap-5 p-2">
-          <Avatar user={user} size={"20"} />
+          <Avatar user={user} size={"20"} textSize="3xl" />
           <div className="w-full flex flex-col gap-3">
             <p className="text-xl font-normal">{user.username}</p>
             <Link
@@ -114,7 +114,7 @@ const Profile = () => {
             {user.feeds.map((feed) => (
               <Link key={feed.id} href={`/feed/${feed.id}`}>
                 <div
-                  className="w-full h-50 aspect-square border-[0.1px] border-[#c8c8c8] bg-cover bg-no-repeat bg-center"
+                  className="w-full h-50 aspect-square border-[0.5px] border-[#c8c8c8] bg-cover bg-no-repeat bg-center"
                   style={{
                     backgroundImage: `url('${bgUrl(feed.imageUrl!)}')`,
                   }}

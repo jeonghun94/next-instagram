@@ -28,7 +28,7 @@ const Feed = ({ feed }: FeedProps) => {
       <div className="h-10 mb-2">
         <div className="w-full h-full flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Avatar user={feed.user} size="10" />
+            <Avatar user={feed.user} size="10" textSize="xl" />
             <div>
               <p className="text-sm font-semibold">
                 {`${feed.user.username} `}

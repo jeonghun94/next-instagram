@@ -121,8 +121,7 @@ const Login = () => {
           Github 계정으로 로그인
         </Link>
         <Link
-          type="button"
-          href="/api/auth/google/start"
+          href="/forgot-password"
           className="text-[#385898] flex justify-center items-center text-xs gap-2 rounded-3xl my-3 w-full cursor-pointer placeholder:text-gray-600 focus:outline-none  "
           placeholder="이메일 주소"
         >

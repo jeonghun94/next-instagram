@@ -35,7 +35,7 @@ const BottomTabBar = () => {
         <IoPaperPlaneOutline className="w-7 h-7 " />
       </Link>
       <Link href="/profile">
-        <Avatar size="6" user={user} />
+        <Avatar size="7" user={user} textSize="sm" />
       </Link>
       <ModalOverlay isOpen={isOpen} onClose={closeModal} />
     </div>

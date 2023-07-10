@@ -17,6 +17,7 @@ interface LayoutProps {
   pageTitle?: string;
   isHome?: boolean;
   header?: boolean;
+  bottomTabBar?: boolean;
 }
 
 export const ModalOverlay = ({
@@ -209,6 +210,7 @@ const Layout = ({
   pageTitle,
   actionBtn,
   header = true,
+  bottomTabBar = true,
 }: LayoutProps) => {
   const router = useRouter();
   const handleBack = () => {
@@ -237,7 +239,7 @@ const Layout = ({
       )}
 
       {children}
-      <BottomTabBar />
+      {bottomTabBar && <BottomTabBar />}
     </div>
   );
 };

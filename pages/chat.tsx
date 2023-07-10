@@ -1,12 +1,11 @@
-import Layout from "../components/HomeLayout";
-import { FaFacebookMessenger } from "react-icons/fa";
-import { BiMessageAdd } from "react-icons/bi";
-import { NextPageContext } from "next";
-
 import client from "@/lib/server/db";
+import { NextPageContext } from "next";
 import { withSsrSession } from "@/lib/server/withSession";
 import { InstagramUser } from "@prisma/client";
+import { FaFacebookMessenger } from "react-icons/fa";
+import { BiMessageAdd } from "react-icons/bi";
 import Avatar from "@/components/user/avatar";
+import Layout from "@/components/HomeLayout";
 
 interface ChatProp {
   id: number;
@@ -33,7 +32,7 @@ const Chat = ({ followingUsers }: ChatProps) => {
           <div className="flex flex-col gap-5">
             {followingUsers.map((user, i) => (
               <div onClick={handleSend} className="cursor-pointer">
-                <Avatar key={i} user={user.following} size="14" />
+                <Avatar key={i} user={user.following} size="14" textSize="xl" />
               </div>
             ))}
           </div>
@@ -67,12 +66,10 @@ export const getServerSideProps = withSsrSession(
       where: {
         followerId: Number(req?.session.user?.id),
       },
-
       include: {
         following: true,
       },
     });
-    console.log(followingUsers);
 
     return {
       props: {
