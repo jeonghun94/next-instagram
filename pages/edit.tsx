@@ -94,7 +94,7 @@ const EditProfile: NextPage = () => {
       <Layout
         pageTitle="Edit Profile"
         subTitle="Edit profile"
-        sideBar={false}
+        // sideBar={false}
         actionBtn={actionBtn()}
       >
         <div className="-mt-3 space-y-4">
