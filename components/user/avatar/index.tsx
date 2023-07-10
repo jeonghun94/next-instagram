@@ -7,6 +7,8 @@ interface PageProps {
 }
 
 const Avatar = ({ user, size, isTop = false }: PageProps) => {
+  console.log(user);
+
   return (
     <div
       className={`flex justify-center items-center h-${size} w-${size} ${

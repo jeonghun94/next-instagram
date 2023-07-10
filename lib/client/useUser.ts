@@ -1,9 +1,34 @@
 // import { User } from "@prisma/client";
+import { InstagramFeed } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import useSWR from "swr";
 
-export default function useUser() {
+interface UserProps {
+  user: {
+    id: number;
+    email: string;
+    name: string;
+    username: string;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
+    color: string;
+    avatarUrl: string | null;
+    backgroundUrl: string | null;
+    feeds: InstagramFeed[];
+    _count: {
+      followers: number;
+      following: number;
+      feeds: number;
+      likes: number;
+      replys: number;
+    };
+  };
+  isLoading: boolean;
+}
+
+export default function useUser(): UserProps {
   const { data, error } = useSWR("/api/me");
   const router = useRouter();
   useEffect(() => {

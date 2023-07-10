@@ -1,9 +1,24 @@
 import Layout from "../components/HomeLayout";
 import { FaFacebookMessenger } from "react-icons/fa";
-
 import { BiMessageAdd } from "react-icons/bi";
+import { NextPageContext } from "next";
 
-const Feeds = () => {
+import client from "@/lib/server/db";
+import { withSsrSession } from "@/lib/server/withSession";
+import { InstagramUser } from "@prisma/client";
+import Avatar from "@/components/user/avatar";
+
+interface ChatProp {
+  id: number;
+  followerId: number;
+  followingId: number;
+  following: InstagramUser;
+}
+
+interface ChatProps {
+  followingUsers: ChatProp[];
+}
+const Chat = ({ followingUsers }: ChatProps) => {
   const handleSend = () => {
     return alert("서비스 준비중입니다.");
   };
@@ -12,15 +27,15 @@ const Feeds = () => {
     <Layout header={false}>
       <div className="w-full min-h-screen grid grid-cols-10 ">
         <div className="w-full h-full py-10 col-span-2 border-r flex flex-col items-center gap-5 overflow-y-auto max-h-screen">
-          <button>
+          <button onClick={handleSend}>
             <BiMessageAdd className="w-7 h-7" />
           </button>
           <div className="flex flex-col gap-5">
-            {Array(12)
-              .fill(0)
-              .map((_, i) => (
-                <div className="w-14 h-14 aspect-square rounded-full border"></div>
-              ))}
+            {followingUsers.map((user, i) => (
+              <div onClick={handleSend} className="cursor-pointer">
+                <Avatar key={i} user={user.following} size="14" />
+              </div>
+            ))}
           </div>
           <br />
         </div>
@@ -44,4 +59,25 @@ const Feeds = () => {
   );
 };
 
-export default Feeds;
+export default Chat;
+
+export const getServerSideProps = withSsrSession(
+  async ({ req }: NextPageContext) => {
+    const followingUsers = await client.instagramFollows.findMany({
+      where: {
+        followerId: Number(req?.session.user?.id),
+      },
+
+      include: {
+        following: true,
+      },
+    });
+    console.log(followingUsers);
+
+    return {
+      props: {
+        followingUsers: JSON.parse(JSON.stringify(followingUsers)),
+      },
+    };
+  }
+);

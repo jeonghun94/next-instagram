@@ -72,9 +72,8 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
   const feeds = await client.instagramFeed.findMany({
     ...(text ? { where: { text: { contains: String(text) } } } : {}),
     include: { user: true },
+    orderBy: { createdAt: "desc" },
   });
-
-  console.log(feeds);
 
   return {
     props: {

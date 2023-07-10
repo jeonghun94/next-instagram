@@ -9,7 +9,7 @@ export default function TweetImage({ imageUrl, height }: PageProps) {
   return (
     <div className="relative mt-2">
       <Image
-        src={`https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${imageUrl}/avatar`}
+        src={`https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${imageUrl}/public`}
         className="rounded-3xl w-full"
         alt="tweet image"
         priority

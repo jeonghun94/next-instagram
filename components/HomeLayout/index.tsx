@@ -216,7 +216,7 @@ const Layout = ({
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col ">
+    <div className="w-full min-h-screen flex flex-col pb-7">
       {header && (
         <>
           <CustomHead pageTitle={pageTitle} />

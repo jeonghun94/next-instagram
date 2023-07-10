@@ -10,7 +10,9 @@ async function handler(
   const profile = await client.instagramUser.findUnique({
     where: { id: req.session.user?.id },
     include: {
-      // tweets: true,
+      feeds: {
+        orderBy: { createdAt: "desc" },
+      },
       _count: true,
     },
   });

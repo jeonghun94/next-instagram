@@ -9,7 +9,6 @@ async function handler(
 ) {
   const followerId = Number(req.session.user?.id);
 
-  console.log(followerId);
   const followingIds = await client.instagramFollows.findMany({
     where: { followerId },
     select: { followingId: true },
