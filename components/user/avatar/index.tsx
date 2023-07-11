@@ -6,7 +6,7 @@ interface PageProps {
   user: User;
 }
 
-const Avatar = ({ user, size, textSize }: PageProps) => {
+const Avatar = ({ user, size, textSize = "md" }: PageProps) => {
   return (
     <div
       className={`flex justify-center items-center h-${size} w-${size}

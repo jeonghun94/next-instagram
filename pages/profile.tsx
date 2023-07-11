@@ -62,7 +62,7 @@ const Profile = () => {
           <div className="w-full flex flex-col gap-3">
             <p className="text-xl font-normal">{user.username}</p>
             <Link
-              href="/edit"
+              href="/edit-profile"
               className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
             >
               프로필 편집
