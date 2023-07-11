@@ -14,7 +14,7 @@ const Feed = ({ feed }: FeedProps) => {
 
   return (
     <Layout>
-      <Avatar size="10" user={feed.user} />
+      <Avatar size="10" user={feed.user} textSize="md" />
       <h1>{feed.user.username}</h1>
       <Image
         src={bgUrl}
