@@ -55,6 +55,7 @@ export const getServerSideProps = withSsrSession(
             username: true,
             avatarUrl: true,
             name: true,
+            color: true,
           },
         },
         bookmarks: query,

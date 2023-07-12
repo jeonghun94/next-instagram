@@ -22,7 +22,7 @@ const Feeds = ({ feeds }: FeedsProps) => {
     const bgUrl = `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${imageUrl}/public`;
     return (
       <div
-        className="w-full h-30 aspect-square border bg-cover bg-no-repeat bg-center"
+        className="w-full h-30 aspect-square  bg-cover bg-no-repeat bg-center"
         style={{
           backgroundImage: `url('${bgUrl}')`,
         }}
@@ -45,7 +45,7 @@ const Feeds = ({ feeds }: FeedsProps) => {
           />
         </div>
       </form>
-      <div className="grid grid-cols-3 ">
+      <div className="grid grid-cols-3 gap-[1px]">
         {feeds && feeds.length > 0 ? (
           feeds.map((feed) => (
             <Link key={feed.id} href={`/feed/${feed.id}`}>

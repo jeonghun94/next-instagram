@@ -74,13 +74,14 @@ const Feed = ({ feed, userId }: FeedProps) => {
               <BsHeart className="w-6 h-6" />
             )}
           </button>
-          <button className="-mt-1">
-            {feed.replys.filter((pre) => pre.userId === userId).length > 0 ? (
+          <Link href={`/feed/${feed.id}`} className="-mt-1">
+            {/* {feed.replys.filter((pre) => pre.userId === userId).length > 0 ? (
               <BsChatFill className="w-6 h-6" />
             ) : (
               <BsChat className="w-6 h-6" />
-            )}
-          </button>
+            )} */}
+            <BsChat className="w-6 h-6" />
+          </Link>
           <button className="-ml-1">
             <IoPaperPlaneOutline className="w-6 h-6" />
           </button>
@@ -106,13 +107,19 @@ const Feed = ({ feed, userId }: FeedProps) => {
         </p>
         {isLongText && !isMoreTextClicked && (
           <p
-            className={`text-sm text-gray-500 cursor-pointer ${
+            className={`text-sm text-gray-800 cursor-pointer  ${
               isMoreTextClicked ? "hidden" : ""
             }}`}
             onClick={handleMoreTextClick}
           >
-            더보기
+            더 보기
           </p>
+        )}
+
+        {feed.replys.length > 0 && (
+          <Link href={`/feed/${feed.id}`} className="text-sm text-gray-700">
+            {`댓글 ${feed.replys.length}개 모두 보기`}
+          </Link>
         )}
       </div>
       <hr className="my-6" />
