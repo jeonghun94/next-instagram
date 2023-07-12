@@ -1,5 +1,13 @@
-import { FeedWithUser } from "@/types";
-import { BsChat, BsHeart, BsBookmark, BsThreeDots } from "react-icons/bs";
+import { Feeds } from "@/types";
+import {
+  BsChat,
+  BsHeart,
+  BsBookmark,
+  BsThreeDots,
+  BsBookmarkFill,
+  BsChatFill,
+  BsHeartFill,
+} from "react-icons/bs";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import Avatar from "../user/avatar";
 import Image from "next/image";
@@ -8,10 +16,11 @@ import { convertTime } from "@/lib/client/utils";
 import { useState } from "react";
 
 interface FeedProps {
-  feed: FeedWithUser;
+  feed: Feeds;
+  userId: number;
 }
 
-const Feed = ({ feed }: FeedProps) => {
+const Feed = ({ feed, userId }: FeedProps) => {
   const [isMoreTextClicked, setIsMoreTextClicked] = useState<boolean>(false);
   const bgUrl = (url: string) => {
     return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
@@ -59,17 +68,29 @@ const Feed = ({ feed }: FeedProps) => {
       <div className="flex justify-between items-center px-2 py-3">
         <div className="flex gap-6 items-center ">
           <button>
-            <BsHeart className="w-6 h-6" />
+            {feed.likes.filter((pre) => pre.userId === userId).length > 0 ? (
+              <BsHeartFill className="w-6 h-6 text-red-500" />
+            ) : (
+              <BsHeart className="w-6 h-6" />
+            )}
           </button>
           <button className="-mt-1">
-            <BsChat className="w-6 h-6" />
+            {feed.replys.filter((pre) => pre.userId === userId).length > 0 ? (
+              <BsChatFill className="w-6 h-6" />
+            ) : (
+              <BsChat className="w-6 h-6" />
+            )}
           </button>
           <button className="-ml-1">
             <IoPaperPlaneOutline className="w-6 h-6" />
           </button>
         </div>
         <div>
-          <BsBookmark className="w-6 h-6" />
+          {feed.bookmarks.filter((pre) => pre.userId === userId).length > 0 ? (
+            <BsBookmarkFill className="w-6 h-6" />
+          ) : (
+            <BsBookmark className="w-6 h-6" />
+          )}
         </div>
       </div>
 

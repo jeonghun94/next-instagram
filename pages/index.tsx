@@ -1,7 +1,7 @@
 import { withSsrSession } from "@/lib/server/withSession";
 import { NextPageContext } from "next";
 import client from "@/lib/server/db";
-import { FeedWithUser } from "@/types";
+import { Feeds } from "@/types";
 import Layout from "@/components/HomeLayout";
 import Stories from "@/components/Stories/inedex";
 import Feed from "@/components/Feed";
@@ -9,16 +9,17 @@ import useSWR from "swr";
 
 interface FeedsProps {
   ok?: boolean;
-  feeds: FeedWithUser[];
+  feeds: Feeds[];
+  userId: number;
 }
 
-const Home = ({ feeds }: FeedsProps) => {
+const Home = ({ feeds, userId }: FeedsProps) => {
   // const { data } = useSWR<FeedsProps>("/api/feed/following");
   return (
     <Layout isHome>
       <Stories />
       {feeds.map((feed) => (
-        <Feed key={feed.id} feed={feed} />
+        <Feed key={feed.id} feed={feed} userId={userId} />
       ))}
     </Layout>
   );
@@ -35,6 +36,16 @@ export const getServerSideProps = withSsrSession(
       select: { followingId: true },
     });
 
+    const query = {
+      include: {
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    };
+
     const feeds = await client.instagramFeed.findMany({
       where: { userId: { in: followingIds.map((item) => item.followingId) } },
       include: {
@@ -46,14 +57,20 @@ export const getServerSideProps = withSsrSession(
             name: true,
           },
         },
+        bookmarks: query,
+        likes: query,
+        replys: query,
         _count: { select: { replys: true, likes: true } },
       },
       orderBy: { createdAt: "desc" },
     });
 
+    console.log("feeds", feeds);
+
     return {
       props: {
         feeds: JSON.parse(JSON.stringify(feeds)),
+        userId: Number(req?.session.user?.id),
       },
     };
   }
