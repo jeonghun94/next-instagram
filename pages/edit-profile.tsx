@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
 import client from "@/lib/server/db";
+import { NextPageContext } from "next";
+import { withSsrSession } from "@/lib/server/withSession";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import { InstagramUser } from "@prisma/client";
 import useMutation from "@/lib/client/useMutation";
 import Layout from "@/components/HomeLayout";
 import ErrorText from "@/components/error-text";
 import Avatar from "@/components/user/avatar";
-import useUser from "@/lib/client/useUser";
-import { NextPageContext } from "next";
-import { withSsrSession } from "@/lib/server/withSession";
-import { InstagramUser } from "@prisma/client";
+import Image from "next/image";
 
 interface FormProps {
   name: string;
   password: string;
-  photo: FileList;
+  avatar: FileList;
 }
 
 interface MutationResult {
@@ -22,19 +23,44 @@ interface MutationResult {
   password: string;
 }
 
-interface D {
+interface UserProps {
   user: InstagramUser;
 }
 
-const EditProFile = ({ user }: D) => {
+const EditProFile = ({ user }: UserProps) => {
   const [error, setError] = useState<string | null>(null);
-  const { register, handleSubmit, formState } = useForm<FormProps>();
-  // const { user } = useUser();
-  const [password, { loading, data }] =
-    useMutation<MutationResult>("/api/user/password");
+  const { register, handleSubmit, watch, formState } = useForm<FormProps>({
+    defaultValues: {
+      name: user.name,
+      password: user.password,
+    },
+  });
 
-  const onSubmit = async (formData: FormProps) => {
-    await password(formData);
+  const avatar = watch("avatar");
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const router = useRouter();
+
+  const [editProfile, { loading, data }] = useMutation<MutationResult>(
+    "/api/user/edit-profile"
+  );
+
+  const onSubmit = async ({ avatar, name, password }: FormProps) => {
+    let newAvatarUrl = "";
+
+    if (avatar && avatar.length > 0) {
+      const form = new FormData();
+      const { uploadURL } = await (await fetch(`/api/files`)).json();
+      form.append("file", avatar[0]);
+      const response = await fetch(uploadURL, { method: "POST", body: form });
+      const { result } = await response.json();
+      newAvatarUrl = result.id;
+    }
+
+    editProfile({
+      newAvatarUrl,
+      password,
+      name,
+    });
   };
 
   const setErrorWithTimeout = (errorMessage: string) => {
@@ -45,12 +71,18 @@ const EditProFile = ({ user }: D) => {
   };
 
   useEffect(() => {
-    if (data) {
-      if (data.ok) {
-        console.log(data, "data");
-      } else {
-        setErrorWithTimeout(data.error);
-      }
+    if (avatar && avatar.length > 0) {
+      const files = [];
+      files.push(URL.createObjectURL(avatar[0]));
+      setAvatarPreview(files.toString());
+    }
+  }, [avatar]);
+
+  useEffect(() => {
+    if (data?.ok) {
+      router.push("/profile");
+    } else if (data?.error) {
+      setErrorWithTimeout(data.error);
     }
   }, [data]);
 
@@ -67,7 +99,17 @@ const EditProFile = ({ user }: D) => {
           </h1>
 
           <div className="flex gap-4">
-            <Avatar size="10" user={user} textSize="md" />
+            {!avatarPreview ? (
+              <Avatar size="10" user={user} textSize="md" />
+            ) : (
+              <Image
+                className="rounded-full aspect-square"
+                src={avatarPreview}
+                alt="이미지를 불러올 수 없습니다:("
+                width={"40"}
+                height={"40"}
+              />
+            )}
             <div className="flex flex-col">
               <p className="font-semibold">{user?.username}</p>
               <label className="cursor-pointer text-gray-600 flex items-center justify-center rounded-md relative">
@@ -79,7 +121,7 @@ const EditProFile = ({ user }: D) => {
                   </h3>
                 </div>
                 <input
-                  {...register("photo")}
+                  {...register("avatar")}
                   className="hidden"
                   accept="image/*"
                   type="file"
@@ -101,7 +143,6 @@ const EditProFile = ({ user }: D) => {
                 })}
                 className="text-xs border bg-[#FAFAFA] border-gray-300 rounded-[4px] p-2 w-2/3  placeholder:text-gray-600 placeholder:bg-[#FAFAFA] focus:outline-none"
                 placeholder="이름"
-                value={user?.name}
                 type="text"
                 name="name"
                 id="name"
@@ -120,7 +161,6 @@ const EditProFile = ({ user }: D) => {
                 })}
                 className="text-xs border bg-[#FAFAFA] border-gray-300 rounded-[4px] p-2 w-2/3 placeholder:text-gray-600 placeholder:bg-[#FAFAFA] focus:outline-none"
                 placeholder="비밀번호"
-                value={user?.password}
                 type="password"
                 name="password"
                 id="password"
@@ -143,7 +183,6 @@ const EditProFile = ({ user }: D) => {
     </Layout>
   );
 };
-
 export default EditProFile;
 
 export const getServerSideProps = withSsrSession(

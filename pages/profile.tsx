@@ -1,15 +1,9 @@
-import useUser from "../lib/client/useUser";
-import Layout from "../components/HomeLayout";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { useState } from "react";
+import useUser from "@/lib/client/useUser";
+import Layout from "@/components/HomeLayout";
+import Avatar from "@/components/user/avatar";
 import { BsGrid3X3, BsBookmark, BsPerson, BsCamera } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
-import Avatar from "@/components/user/avatar";
-import { NextPageContext } from "next";
-import client from "@/lib/server/db";
-import Image from "next/image";
-import Feed from "@/components/Feed";
 
 export interface MutationResult {
   ok: boolean;
