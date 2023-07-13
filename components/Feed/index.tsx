@@ -14,6 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { convertTime } from "@/lib/client/utils";
 import { useState } from "react";
+import useSWR from "swr";
+import useMutation from "@/lib/client/useMutation";
 
 interface FeedProps {
   feed: Feeds;
@@ -30,6 +32,12 @@ const Feed = ({ feed, userId }: FeedProps) => {
 
   const handleMoreTextClick = () => {
     setIsMoreTextClicked(true);
+  };
+
+  const [toggleLike] = useMutation(`/api/feed/${feed.id}/like`);
+
+  const handleLikeBtn = () => {
+    toggleLike({});
   };
 
   return (
@@ -67,8 +75,10 @@ const Feed = ({ feed, userId }: FeedProps) => {
       </Link>
       <div className="flex justify-between items-center px-2 py-3">
         <div className="flex gap-6 items-center ">
-          <button>
-            {feed.likes.filter((pre) => pre.userId === userId).length > 0 ? (
+          <button onClick={handleLikeBtn}>
+            {feed.likes.filter(
+              (pre) => pre.userId === userId && pre.feedId === feed.id
+            ).length > 0 ? (
               <BsHeartFill className="w-6 h-6 text-red-500" />
             ) : (
               <BsHeart className="w-6 h-6" />
