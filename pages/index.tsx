@@ -14,11 +14,15 @@ interface FeedsProps {
 }
 
 const Home = ({ feeds, userId }: FeedsProps) => {
-  // const { data } = useSWR<FeedsProps>("/api/feed/following");
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data } = useSWR<Feeds[]>("/api/feeds", fetcher, {
+    fallbackData: feeds,
+  });
+
   return (
     <Layout isHome>
       <Stories />
-      {feeds.map((feed) => (
+      {data?.map((feed) => (
         <Feed key={feed.id} feed={feed} userId={userId} />
       ))}
     </Layout>
