@@ -44,7 +44,7 @@ const Login = () => {
   }, [data]);
 
   return (
-    <Layout error={error}>
+    <Layout isLogin error={error}>
       <Head>
         <title>가입하기 • Instagram</title>
         <link

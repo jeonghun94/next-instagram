@@ -29,10 +29,22 @@ async function handler(
     })
   );
 
+  const isBookmarked = Boolean(
+    await client.instagramBookMark.findFirst({
+      where: {
+        feedId: feed?.id,
+        userId: user?.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  );
+
   return res.json({
     ok: true,
+    isBookmarked,
     isLiked,
-    isBookmarked: false,
   });
 }
 

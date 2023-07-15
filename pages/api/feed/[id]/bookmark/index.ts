@@ -15,7 +15,7 @@ async function handler(
   const feedId = Number(id);
   const userId = Number(user?.id);
 
-  const exists = await client.instagramLike.findFirst({
+  const exists = await client.instagramBookMark.findFirst({
     where: {
       feedId,
       userId,
@@ -23,13 +23,13 @@ async function handler(
   });
 
   if (exists) {
-    await client.instagramLike.delete({
+    await client.instagramBookMark.delete({
       where: {
         id: exists.id,
       },
     });
   } else {
-    await client.instagramLike.create({
+    await client.instagramBookMark.create({
       data: {
         user: { connect: { id: userId } },
         feed: { connect: { id: feedId } },
