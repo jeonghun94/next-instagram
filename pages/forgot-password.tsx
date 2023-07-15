@@ -45,10 +45,10 @@ export default function ResetPassword() {
 
   return (
     <Layout isHome pageTitle="비밀번호 재설정" bottomTabBar={false}>
-      <div className="m-14 my-20">
+      <div className="m-10 my-20">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full border rounded-[3px] p-4 px-10 flex flex-col items-center pb-32 relative"
+          className="w-full border rounded-[3px] p-4 px-8 flex flex-col items-center pb-32 relative"
         >
           <div className="p-4 my-3 border-2 border-black rounded-full">
             <IoLockClosedOutline className="w-14 h-14" />

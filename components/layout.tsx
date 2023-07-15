@@ -10,10 +10,10 @@ interface LayoutProps {
 
 export default function Layout({ children, isLogin, error }: LayoutProps) {
   return (
-    <div className="w-full min-h-screen  flex justify-center ">
+    <div className="w-full min-h-screen flex justify-center ">
       <div
-        className={`w-full h-full mx-8 p-4 px-10 flex flex-col justify-center items-center ${
-          isLogin ? "mt-48" : ""
+        className={`w-full h-full mx-8 p-4 px-4 flex flex-col justify-center items-center ${
+          isLogin ? "mt-14" : ""
         }`}
       >
         {children}

@@ -59,6 +59,8 @@ export const getServerSideProps = withSsrSession(
       orderBy: { createdAt: "desc" },
     });
 
+    console.log(feeds);
+
     return {
       props: {
         feeds: JSON.parse(JSON.stringify(feeds)),

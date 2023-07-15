@@ -71,7 +71,7 @@ const Feed = ({
       ></div>
     </Link>
   ) : (
-    <Link key={feed.id} href={`/feed/${feed.id}`}>
+    <>
       {includeUser && (
         <div className="h-10 my-2">
           <div className="w-full h-full flex items-center justify-between">
@@ -169,7 +169,7 @@ const Feed = ({
           <hr className="my-6" />
         </>
       )}
-    </Link>
+    </>
   );
 };
 

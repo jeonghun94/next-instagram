@@ -56,7 +56,7 @@ const Login = () => {
       </Head>
       <form
         onSubmit={handleSubmit(submitting)}
-        className="w-full border p-4 px-10 flex flex-col items-center"
+        className="w-full border p-4 px-8 flex flex-col items-center"
       >
         <i className="mt-8 w-[175px] h-[51px] inline-block bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover"></i>
         <p className="my-4 text-lg text-[#737373] text-center font-semibold">
