@@ -103,7 +103,7 @@ const Profile = () => {
         {user.feeds ? (
           <div className="grid grid-cols-3 ">
             {user.feeds.map((feed) => (
-              <Feed feed={feed} imageOnly />
+              <Feed key={feed.id} feed={feed} imageOnly />
             ))}
           </div>
         ) : (

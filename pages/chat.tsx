@@ -31,8 +31,8 @@ const Chat = ({ followingUsers }: ChatProps) => {
           </button>
           <div className="flex flex-col gap-5">
             {followingUsers.map((user, i) => (
-              <div onClick={handleSend} className="cursor-pointer">
-                <Avatar key={i} user={user.following} size="14" textSize="xl" />
+              <div onClick={handleSend} key={i} className="cursor-pointer">
+                <Avatar user={user.following} size="14" textSize="xl" />
               </div>
             ))}
           </div>

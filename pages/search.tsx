@@ -3,9 +3,8 @@ import { NextPageContext } from "next";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Layout from "../components/HomeLayout";
-import Link from "next/link";
 import { BiSearch } from "react-icons/bi";
-import { FeedWithUser, Feeds } from "@/types";
+import { Feeds } from "@/types";
 
 import Feed from "@/components/Feed";
 

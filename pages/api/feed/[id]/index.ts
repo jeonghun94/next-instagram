@@ -32,6 +32,7 @@ async function handler(
   return res.json({
     ok: true,
     isLiked,
+    isBookmarked: false,
   });
 }
 
