@@ -1,7 +1,8 @@
 import Link from "next/link";
-import useUser from "@/lib/client/useUser";
 import Layout from "@/components/HomeLayout";
 import Avatar from "@/components/user/avatar";
+import Feed from "@/components/Feed";
+import useUser from "@/lib/client/useUser";
 import { BsGrid3X3, BsBookmark, BsPerson, BsCamera } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 
@@ -10,10 +11,6 @@ export interface MutationResult {
 }
 
 const Profile = () => {
-  const bgUrl = (url: string) => {
-    return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
-  };
-
   const { user, isLoading } = useUser();
   const subTitle = () => {
     return (
@@ -106,14 +103,7 @@ const Profile = () => {
         {user.feeds ? (
           <div className="grid grid-cols-3 ">
             {user.feeds.map((feed) => (
-              <Link key={feed.id} href={`/feed/${feed.id}`}>
-                <div
-                  className="w-full h-50 aspect-square border-[0.5px] border-[#c8c8c8] bg-cover bg-no-repeat bg-center"
-                  style={{
-                    backgroundImage: `url('${bgUrl(feed.imageUrl!)}')`,
-                  }}
-                ></div>
-              </Link>
+              <Feed feed={feed} imageOnly />
             ))}
           </div>
         ) : (
@@ -139,18 +129,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-// export const getServerSideProps = async (ctx: NextPageContext) => {
-//   const { req, res } = ctx;
-
-//   const myFeeds = await client.instagramFeed.findMany({
-//     where: {
-//       userId: Number(req?.session.user?.id),
-//     },
-//     include: {
-//       user: true,
-//     },
-//   });
-
-//   console.log(myFeeds);
-// };

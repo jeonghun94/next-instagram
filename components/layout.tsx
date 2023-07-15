@@ -1,24 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import ErrorText from "./error-text";
-import Header from "./header";
 
 interface LayoutProps {
   children: React.ReactNode;
   error?: string | null;
   isLogin?: boolean;
-  header?: boolean;
 }
 
-export default function Layout({
-  children,
-  isLogin,
-  error,
-  header,
-}: LayoutProps) {
+export default function Layout({ children, isLogin, error }: LayoutProps) {
   return (
     <div className="w-full min-h-screen  flex justify-center ">
-      {/* {!header && <Header />} */}
       <div
         className={`w-full h-full mx-8 p-4 px-10 flex flex-col justify-center items-center ${
           isLogin ? "mt-48" : ""

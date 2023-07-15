@@ -22,9 +22,17 @@ const Home = ({ feeds, userId }: FeedsProps) => {
   return (
     <Layout isHome>
       <Stories />
-      {data?.map((feed) => (
-        <Feed key={feed.id} feed={feed} userId={userId} />
-      ))}
+      <div className="px-4">
+        {data?.map((feed) => (
+          <Feed
+            key={feed.id}
+            feed={feed}
+            includeUser
+            includeIcons
+            includeReplys
+          />
+        ))}
+      </div>
     </Layout>
   );
 };

@@ -7,36 +7,32 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const userId = Number(req.session.user?.id);
-  const feedId = Number(req.query.id);
+  const {
+    query: { id },
+    session: { user },
+  } = req;
 
-  const like = await client.instagramLike.findFirst({
+  const feedId = Number(id);
+  const userId = Number(user?.id);
+
+  const exists = await client.instagramLike.findFirst({
     where: {
-      AND: [{ userId }, { feedId }],
+      feedId,
+      userId,
     },
   });
 
-  console.log("like", like);
-
-  if (like) {
+  if (exists) {
     await client.instagramLike.delete({
       where: {
-        id: like.id,
+        id: exists.id,
       },
     });
   } else {
     await client.instagramLike.create({
       data: {
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-        feed: {
-          connect: {
-            id: feedId,
-          },
-        },
+        user: { connect: { id: userId } },
+        feed: { connect: { id: feedId } },
       },
     });
   }
@@ -46,6 +42,4 @@ async function handler(
   });
 }
 
-export default withApiSession(
-  withHandler({ methods: ["GET", "POST"], handler })
-);
+export default withApiSession(withHandler({ methods: ["POST"], handler }));

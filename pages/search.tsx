@@ -5,10 +5,12 @@ import { useRouter } from "next/router";
 import Layout from "../components/HomeLayout";
 import Link from "next/link";
 import { BiSearch } from "react-icons/bi";
-import { FeedWithUser } from "@/types";
+import { FeedWithUser, Feeds } from "@/types";
+
+import Feed from "@/components/Feed";
 
 interface FeedsProps {
-  feeds: FeedWithUser[];
+  feeds: Feeds[];
 }
 
 const Feeds = ({ feeds }: FeedsProps) => {
@@ -16,18 +18,6 @@ const Feeds = ({ feeds }: FeedsProps) => {
   const { register, handleSubmit } = useForm<{ text: string }>();
   const onSubmit = (data: { text: string }) => {
     router.push(`/search?text=${data.text}`);
-  };
-
-  const Feed = ({ imageUrl }: { imageUrl: string }) => {
-    const bgUrl = `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${imageUrl}/public`;
-    return (
-      <div
-        className="w-full h-30 aspect-square  bg-cover bg-no-repeat bg-center"
-        style={{
-          backgroundImage: `url('${bgUrl}')`,
-        }}
-      ></div>
-    );
   };
 
   return (
@@ -45,13 +35,9 @@ const Feeds = ({ feeds }: FeedsProps) => {
           />
         </div>
       </form>
-      <div className="grid grid-cols-3 gap-[1px]">
+      <div className="grid grid-cols-3 gap-[1px] ">
         {feeds && feeds.length > 0 ? (
-          feeds.map((feed) => (
-            <Link key={feed.id} href={`/feed/${feed.id}`}>
-              <Feed imageUrl={feed.imageUrl!} />
-            </Link>
-          ))
+          feeds.map((feed) => <Feed feed={feed} imageOnly key={feed.id} />)
         ) : (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <h1>검색 결과가 없습니다.</h1>

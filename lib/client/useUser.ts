@@ -1,4 +1,5 @@
 // import { User } from "@prisma/client";
+import { Feeds } from "@/types";
 import { InstagramFeed } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -16,7 +17,7 @@ interface UserProps {
     color: string;
     avatarUrl: string | null;
     backgroundUrl: string | null;
-    feeds: InstagramFeed[];
+    feeds: Feeds[];
     _count: {
       followers: number;
       following: number;

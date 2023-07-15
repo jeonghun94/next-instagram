@@ -1,47 +1,40 @@
 import { NextPageContext } from "next";
+import { withSsrSession } from "@/lib/server/withSession";
 import client from "@/lib/server/db";
-import Avatar from "@/components/user/avatar";
+import { Feeds } from "@/types";
+import Feed from "@/components/Feed";
 import Layout from "@/components/HomeLayout";
-import { FeedWithUser } from "@/types";
-import Image from "next/image";
 
 interface FeedProps {
-  feed: FeedWithUser;
+  feed: Feeds;
 }
 
-const Feed = ({ feed }: FeedProps) => {
-  const bgUrl = `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${feed.imageUrl}/public`;
-
+const FeedDetail = ({ feed }: FeedProps) => {
   return (
     <Layout>
-      <Avatar size="10" user={feed.user} textSize="md" />
-      <h1>{feed.user.username}</h1>
-      <Image
-        src={bgUrl}
-        width={300}
-        height={300}
-        alt="Picture of the author"
-        loading="eager"
-      />
-      <h1>{feed.text}</h1>
-      <h1>{feed.createdAt.toString()}</h1>
+      <div className="px-4">
+        <Feed feed={feed} includeUser includeIcons />
+      </div>
     </Layout>
   );
 };
 
-export default Feed;
+export default FeedDetail;
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
-  const { id } = ctx.query;
+export const getServerSideProps = withSsrSession(
+  async ({ req, query }: NextPageContext) => {
+    const userId = Number(req?.session.user?.id);
+    const { id } = query;
 
-  const feed = await client.instagramFeed.findUnique({
-    where: { id: Number(id) },
-    include: { user: true },
-  });
+    const feed = await client.instagramFeed.findUnique({
+      where: { id: Number(id) },
+      include: { user: true, replys: true },
+    });
 
-  return {
-    props: {
-      feed: JSON.parse(JSON.stringify(feed)),
-    },
-  };
-};
+    return {
+      props: {
+        feed: JSON.parse(JSON.stringify(feed)),
+      },
+    };
+  }
+);

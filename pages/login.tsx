@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
 import React, { useEffect } from "react";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import useMutation from "../lib/client/useMutation";
-import Layout from "../components/layout";
+import useMutation from "@/lib/client/useMutation";
 import Link from "next/link";
 import Head from "next/head";
+import Layout from "@/components/layout";
 
 interface IForm {
   email: string;

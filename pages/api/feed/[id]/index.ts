@@ -7,12 +7,31 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  console.log("req.query", req.query);
+  const {
+    query: { id },
+    session: { user },
+  } = req;
 
-  console.log("dsdsd");
+  const feed = await client.instagramFeed.findUnique({
+    where: { id: Number(id) },
+    include: { user: true },
+  });
+
+  const isLiked = Boolean(
+    await client.instagramLike.findFirst({
+      where: {
+        feedId: feed?.id,
+        userId: user?.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  );
 
   return res.json({
     ok: true,
+    isLiked,
   });
 }
 
