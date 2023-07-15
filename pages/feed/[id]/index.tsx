@@ -13,7 +13,7 @@ const FeedDetail = ({ feed }: FeedProps) => {
   return (
     <Layout>
       <div className="px-4">
-        <Feed feed={feed} includeUser includeIcons />
+        <Feed feed={feed} includeUser includeIcons includeReplyForm />
       </div>
     </Layout>
   );

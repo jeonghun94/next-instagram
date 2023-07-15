@@ -15,11 +15,13 @@ import useMutation from "@/lib/client/useMutation";
 import { convertTime } from "@/lib/client/utils";
 import Avatar from "@/components/user/avatar";
 import { Feeds } from "@/types";
+import { useForm } from "react-hook-form";
 
 interface FeedProps {
   includeUser?: boolean;
   includeReplys?: boolean;
   includeIcons?: boolean;
+  includeReplyForm?: boolean;
   imageOnly?: boolean;
   feed: Feeds;
 }
@@ -29,36 +31,47 @@ const Feed = ({
   includeUser,
   includeIcons,
   includeReplys,
+  includeReplyForm,
   imageOnly,
 }: FeedProps) => {
-  const [isMoreTextClicked, setIsMoreTextClicked] = useState<boolean>(false);
-  const bgUrl = (url: string) => {
+  const [textExpanded, setTextExpanded] = useState<boolean>(false);
+
+  const getBackgroundUrl = (url: string) => {
     return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
   };
 
-  const isLongText = feed.text.length > 20;
+  const hasLongText = feed.text.length > 20;
 
-  const handleMoreTextClick = () => {
-    setIsMoreTextClicked(true);
+  const handleTextExpandClick = () => {
+    setTextExpanded(true);
   };
-  const { data, mutate } = useSWR<Feeds>(`/api/feed/${feed.id}`);
 
-  const [toggleLike] = useMutation(`/api/feed/${feed.id}/like`);
-  const [toggleBookmark] = useMutation(`/api/feed/${feed.id}/bookmark`);
+  const { data: feedData, mutate } = useSWR<Feeds>(`/api/feed/${feed.id}`);
 
-  const onLikeClick = () => {
-    if (!data) return;
+  const { register, handleSubmit, formState } = useForm<{
+    text: { text: string };
+  }>();
+
+  const onSubmit = ({ text }: any) => {
+    console.log(text);
+  };
+
+  const [toggleLikeMutation] = useMutation(`/api/feed/${feed.id}/like`);
+  const [toggleBookmarkMutation] = useMutation(`/api/feed/${feed.id}/bookmark`);
+
+  const toggleLikeStatus = () => {
+    if (!feedData) return;
     mutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
-    toggleLike({});
+    toggleLikeMutation({});
   };
 
-  const onBookmarkClick = () => {
-    if (!data) return;
+  const toggleBookmarkStatus = () => {
+    if (!feedData) return;
     mutate(
       (prev) => prev && { ...prev, isBookmarked: !prev.isBookmarked },
       false
     );
-    toggleBookmark({});
+    toggleBookmarkMutation({});
   };
 
   return imageOnly ? (
@@ -66,7 +79,7 @@ const Feed = ({
       <div
         className="w-full h-30 aspect-square  bg-cover bg-no-repeat bg-center"
         style={{
-          backgroundImage: `url('${bgUrl(feed.imageUrl!)}')`,
+          backgroundImage: `url('${getBackgroundUrl(feed.imageUrl!)}')`,
         }}
       ></div>
     </Link>
@@ -99,7 +112,7 @@ const Feed = ({
         <div className="h-96 border rounded-sm relative ">
           <Image
             alt="feed image"
-            src={bgUrl(feed.imageUrl!)}
+            src={getBackgroundUrl(feed.imageUrl!)}
             fill
             quality={100}
             priority
@@ -111,8 +124,8 @@ const Feed = ({
       {includeIcons && (
         <div className="flex justify-between items-center px-2 py-3">
           <div className="flex gap-6 items-center ">
-            <button onClick={onLikeClick}>
-              {data?.isLiked ? (
+            <button onClick={toggleLikeStatus}>
+              {feedData?.isLiked ? (
                 <BsHeartFill className="w-6 h-6 text-red-500" />
               ) : (
                 <BsHeart className="w-6 h-6" />
@@ -126,8 +139,8 @@ const Feed = ({
             </button>
           </div>
           <div>
-            <button onClick={onBookmarkClick}>
-              {data?.isBookmarked ? (
+            <button onClick={toggleBookmarkStatus}>
+              {feedData?.isBookmarked ? (
                 <BsBookmarkFill className="w-6 h-6" />
               ) : (
                 <BsBookmark className="w-6 h-6" />
@@ -143,18 +156,18 @@ const Feed = ({
             <p className="text-sm font-semibold">
               {`${feed.user.username}의 `}
               <span className="text-gray-500 text-sm font-normal ">
-                {isLongText && !isMoreTextClicked
+                {hasLongText && !textExpanded
                   ? `${feed.text.slice(0, 20)}...`
                   : feed.text}
-                {isMoreTextClicked && feed.text.slice(20)}
+                {textExpanded && feed.text.slice(20)}
               </span>
             </p>
-            {isLongText && !isMoreTextClicked && (
+            {hasLongText && !textExpanded && (
               <p
                 className={`text-sm text-gray-800 cursor-pointer  ${
-                  isMoreTextClicked ? "hidden" : ""
+                  textExpanded ? "hidden" : ""
                 }}`}
-                onClick={handleMoreTextClick}
+                onClick={handleTextExpandClick}
               >
                 더 보기
               </p>
@@ -168,6 +181,31 @@ const Feed = ({
           </div>
           <hr className="my-6" />
         </>
+      )}
+
+      {includeReplyForm && (
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full flex gap-3">
+          <input
+            {...register("text", {
+              required: {
+                value: true,
+                message: "Please enter your text",
+              },
+            })}
+            type="text"
+            className="text-xs border bg-[#FAFAFA] border-gray-300 rounded-md p-3 w-full placeholder:text-gray-600 placeholder:bg-[#FAFAFA] focus:outline-none "
+            placeholder="댓글달기..."
+          />
+          <button
+            className={`min-w-fit p-2 px-4 text-sm text-white rounded-3xl ${
+              formState.isValid
+                ? "bg-[#0095F6]"
+                : "bg-[#C0DFFD] cursor-not-allowed"
+            }`}
+          >
+            게시
+          </button>
+        </form>
       )}
     </>
   );
