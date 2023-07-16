@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IoPaperPlaneOutline } from "react-icons/io5";
@@ -14,8 +14,8 @@ import useSWR from "swr";
 import useMutation from "@/lib/client/useMutation";
 import { convertTime } from "@/lib/client/utils";
 import Avatar from "@/components/user/avatar";
-import { Feeds } from "@/types";
-import { useForm } from "react-hook-form";
+import { Feeds, ReplyWithUser } from "@/types";
+import { set, useForm } from "react-hook-form";
 
 interface FeedProps {
   includeUser?: boolean;
@@ -24,6 +24,15 @@ interface FeedProps {
   includeReplyForm?: boolean;
   imageOnly?: boolean;
   feed: Feeds;
+}
+
+interface FormProps {
+  text?: string;
+}
+
+interface ReplyProps {
+  ok: boolean;
+  replies: ReplyWithUser[];
 }
 
 const Feed = ({
@@ -47,17 +56,41 @@ const Feed = ({
   };
 
   const { data: feedData, mutate } = useSWR<Feeds>(`/api/feed/${feed.id}`);
+  const { data: replyData, mutate: replyMutate } = useSWR<any>(
+    includeReplyForm ? `/api/feed/${feed.id}/reply` : null
+  );
+  const { register, handleSubmit, reset, formState } = useForm<FormProps>();
 
-  const { register, handleSubmit, formState } = useForm<{
-    text: { text: string };
-  }>();
+  const [toggleBookmarkMutation] = useMutation(`/api/feed/${feed.id}/bookmark`);
+  const [toggleLikeMutation] = useMutation(`/api/feed/${feed.id}/like`);
+  const [addReply, { data }] = useMutation(`/api/feed/${feed.id}/reply`);
 
-  const onSubmit = ({ text }: any) => {
-    console.log(text);
+  const [replies, setReplies] = useState<ReplyWithUser[]>(feed.replys || []);
+
+  const onSubmit = ({ text }: FormProps) => {
+    addReply({ text });
+    reset();
+    console.log(data);
+    if (data) {
+      replyMutate((prev) => {
+        if (!prev) return;
+        return {
+          ...prev,
+          replys: [...prev.replys, data?.reply],
+        };
+      });
+    }
+    // setValue("text", "");
+    // setReplies(replyData?.replys);
   };
 
-  const [toggleLikeMutation] = useMutation(`/api/feed/${feed.id}/like`);
-  const [toggleBookmarkMutation] = useMutation(`/api/feed/${feed.id}/bookmark`);
+  useEffect(() => {
+    if (data) {
+      console.log(data, "data");
+
+      // setReplies((prev) => [...prev, data.reply]);
+    }
+  }, [data]);
 
   const toggleLikeStatus = () => {
     if (!feedData) return;
@@ -173,11 +206,11 @@ const Feed = ({
               </p>
             )}
 
-            {feed.replys?.length > 0 && (
+            {/* {feed.replys?.length > 0 && (
               <Link href={`/feed/${feed.id}`} className="text-sm text-gray-700">
                 {`댓글 ${feed.replys.length}개 모두 보기`}
               </Link>
-            )}
+            )} */}
           </div>
           <hr className="my-6" />
         </>
@@ -197,7 +230,7 @@ const Feed = ({
             placeholder="댓글달기..."
           />
           <button
-            className={`min-w-fit p-2 px-4 text-sm text-white rounded-3xl ${
+            className={`min-w-fit p-2 px-4 text-sm text-white rounded-3xl outline-none ${
               formState.isValid
                 ? "bg-[#0095F6]"
                 : "bg-[#C0DFFD] cursor-not-allowed"
@@ -206,6 +239,29 @@ const Feed = ({
             게시
           </button>
         </form>
+      )}
+
+      {includeReplyForm && (
+        <div className="w-full my-3 flex flex-col items-start gap-2 mb-10">
+          {replyData?.replys.map((reply) => (
+            <div key={reply?.id} className="w-full flex flex-col gap-3">
+              <div className="w-full flex items-center">
+                <div className="w-full flex justify-between items-center py-1">
+                  <div className="flex gap-3">
+                    <Avatar user={reply?.user} size="8" textSize="md" />
+                    <div className="flex flex-col items-start gap-1 text-xs">
+                      <p className="text-gray-500">{reply?.user?.name}</p>
+                      <p className="text-sm">{reply?.text}</p>
+                    </div>
+                  </div>
+                  <p className=" text-gray-500 text-xs">
+                    {convertTime(reply?.createdAt?.toString())}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </>
   );

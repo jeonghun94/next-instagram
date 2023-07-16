@@ -41,8 +41,21 @@ async function handler(
     })
   );
 
+  const replies = await client.instagramReply.findMany({
+    where: {
+      feedId: feed?.id,
+    },
+    include: {
+      user: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   return res.json({
     ok: true,
+    replies,
     isBookmarked,
     isLiked,
   });

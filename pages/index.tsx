@@ -42,11 +42,7 @@ export const getServerSideProps = withSsrSession(
 
     const query = {
       include: {
-        user: {
-          select: {
-            id: true,
-          },
-        },
+        user: true,
       },
     };
 

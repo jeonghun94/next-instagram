@@ -22,13 +22,20 @@ const FeedDetail = ({ feed }: FeedProps) => {
 export default FeedDetail;
 
 export const getServerSideProps = withSsrSession(
-  async ({ req, query }: NextPageContext) => {
-    const userId = Number(req?.session.user?.id);
+  async ({ query }: NextPageContext) => {
     const { id } = query;
 
     const feed = await client.instagramFeed.findUnique({
       where: { id: Number(id) },
-      include: { user: true, replys: true },
+      include: {
+        user: true,
+        replys: {
+          include: {
+            user: true,
+          },
+          orderBy: { createdAt: "desc" },
+        },
+      },
     });
 
     return {

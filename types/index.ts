@@ -18,13 +18,17 @@ export interface FeedWithUser extends InstagramFeed {
   };
 }
 
+export interface ReplyWithUser extends InstagramReply {
+  user: InstagramUser;
+}
+
 export interface FeedWithBookmarks extends FeedWithUser {
   bookmarks: InstagramBookMark[];
 }
 
 export interface Feeds extends FeedWithUser {
   bookmarks: InstagramBookMark[];
-  replys: InstagramReply[];
+  replys: ReplyWithUser[];
   likes: InstagramLike[];
   isLiked?: boolean;
   isBookmarked?: boolean;
