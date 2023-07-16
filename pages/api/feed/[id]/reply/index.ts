@@ -46,8 +46,6 @@ async function handler(
       },
     });
 
-    console.log(newNeply);
-
     return res.json({
       ok: true,
       reply: newNeply,

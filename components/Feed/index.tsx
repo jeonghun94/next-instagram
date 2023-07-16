@@ -55,41 +55,25 @@ const Feed = ({
     setTextExpanded(true);
   };
 
-  const { data: feedData, mutate } = useSWR<Feeds>(`/api/feed/${feed.id}`);
-  const { data: replyData, mutate: replyMutate } = useSWR<any>(
-    includeReplyForm ? `/api/feed/${feed.id}/reply` : null
-  );
   const { register, handleSubmit, reset, formState } = useForm<FormProps>();
 
+  const { data: feedData, mutate } = useSWR<Feeds>(`/api/feed/${feed.id}`);
   const [toggleBookmarkMutation] = useMutation(`/api/feed/${feed.id}/bookmark`);
   const [toggleLikeMutation] = useMutation(`/api/feed/${feed.id}/like`);
   const [addReply, { data }] = useMutation(`/api/feed/${feed.id}/reply`);
 
-  const [replies, setReplies] = useState<ReplyWithUser[]>(feed.replys || []);
+  const [replys, setReplys] = useState<ReplyWithUser[]>(feed.replys || []);
 
   const onSubmit = ({ text }: FormProps) => {
     addReply({ text });
     reset();
-    console.log(data);
-    if (data) {
-      replyMutate((prev) => {
-        if (!prev) return;
-        return {
-          ...prev,
-          replys: [...prev.replys, data?.reply],
-        };
-      });
-    }
-    // setValue("text", "");
-    // setReplies(replyData?.replys);
   };
 
   useEffect(() => {
-    if (data) {
-      console.log(data, "data");
+    if (!data) return;
+    setReplys((prev) => [data.reply, ...prev]);
 
-      // setReplies((prev) => [...prev, data.reply]);
-    }
+    console.log(data.reply, "댓글 추가됨");
   }, [data]);
 
   const toggleLikeStatus = () => {
@@ -206,11 +190,11 @@ const Feed = ({
               </p>
             )}
 
-            {/* {feed.replys?.length > 0 && (
+            {feed.replys?.length > 0 && (
               <Link href={`/feed/${feed.id}`} className="text-sm text-gray-700">
                 {`댓글 ${feed.replys.length}개 모두 보기`}
               </Link>
-            )} */}
+            )}
           </div>
           <hr className="my-6" />
         </>
@@ -243,24 +227,30 @@ const Feed = ({
 
       {includeReplyForm && (
         <div className="w-full my-3 flex flex-col items-start gap-2 mb-10">
-          {replyData?.replys.map((reply) => (
-            <div key={reply?.id} className="w-full flex flex-col gap-3">
-              <div className="w-full flex items-center">
-                <div className="w-full flex justify-between items-center py-1">
-                  <div className="flex gap-3">
-                    <Avatar user={reply?.user} size="8" textSize="md" />
-                    <div className="flex flex-col items-start gap-1 text-xs">
-                      <p className="text-gray-500">{reply?.user?.name}</p>
-                      <p className="text-sm">{reply?.text}</p>
+          {replys.length > 0 ? (
+            replys.map((reply) => (
+              <div key={reply?.id} className="w-full flex flex-col gap-3">
+                <div className="w-full flex items-center">
+                  <div className="w-full flex justify-between items-center py-1">
+                    <div className="flex gap-3">
+                      <Avatar user={reply?.user} size="8" textSize="md" />
+                      <div className="flex flex-col items-start gap-1 text-xs">
+                        <p className="text-gray-500">{reply?.user?.name}</p>
+                        <p className="text-sm">{reply?.text}</p>
+                      </div>
                     </div>
+                    <p className=" text-gray-500 text-xs">
+                      {convertTime(reply?.createdAt?.toString())}
+                    </p>
                   </div>
-                  <p className=" text-gray-500 text-xs">
-                    {convertTime(reply?.createdAt?.toString())}
-                  </p>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="w-full py-28 text-center  text-sm ">
+              등록된 댓글이 없습니다.
+            </p>
+          )}
         </div>
       )}
     </>
