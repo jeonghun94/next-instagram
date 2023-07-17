@@ -8,9 +8,9 @@ async function handler(
   res: NextApiResponse<ResponseType>
 ) {
   const {
-    query: { id },
     session: { user },
     body: { text },
+    query: { id },
   } = req;
 
   const userId = Number(user?.id);

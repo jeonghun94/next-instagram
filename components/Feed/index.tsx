@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IoPaperPlaneOutline } from "react-icons/io5";
@@ -15,7 +15,7 @@ import useMutation from "@/lib/client/useMutation";
 import { convertTime } from "@/lib/client/utils";
 import Avatar from "@/components/user/avatar";
 import { Feeds, ReplyWithUser } from "@/types";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 interface FeedProps {
   includeUser?: boolean;
@@ -28,11 +28,6 @@ interface FeedProps {
 
 interface FormProps {
   text?: string;
-}
-
-interface ReplyProps {
-  ok: boolean;
-  replies: ReplyWithUser[];
 }
 
 const Feed = ({
@@ -72,8 +67,6 @@ const Feed = ({
   useEffect(() => {
     if (!data) return;
     setReplys((prev) => [data.reply, ...prev]);
-
-    console.log(data.reply, "댓글 추가됨");
   }, [data]);
 
   const toggleLikeStatus = () => {

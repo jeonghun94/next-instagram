@@ -3,15 +3,72 @@ import Layout from "@/components/HomeLayout";
 import Avatar from "@/components/user/avatar";
 import Feed from "@/components/Feed";
 import useUser from "@/lib/client/useUser";
-import { BsGrid3X3, BsBookmark, BsPerson, BsCamera } from "react-icons/bs";
+import { BsGrid3X3, BsBookmark, BsPerson, BsHeart } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
+import { useState } from "react";
+import client from "@/lib/server/db";
+import { withSsrSession } from "@/lib/server/withSession";
+import { NextPageContext } from "next";
 
 export interface MutationResult {
   ok: boolean;
 }
 
-const Profile = () => {
+interface Tab {
+  id: string;
+  content: any;
+  icon: (isActive: boolean) => JSX.Element;
+}
+
+interface F {
+  id: number;
+  imageUrl: string;
+}
+
+interface PageProps {
+  feeds: F[];
+  likeFeeds: F[];
+  bookmarkFeeds: F[];
+}
+
+const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: PageProps) => {
+  const grid = (feeds: F[]) => {
+    return feeds.map((feed) => <div>{feed.id}</div>);
+  };
+  const getBackgroundUrl = (url: string) => {
+    return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
+  };
   const { user, isLoading } = useUser();
+  const tabs: Tab[] = [
+    {
+      id: "a",
+      icon: (isActive: boolean) => (
+        <BsGrid3X3 className={`w-4 h-4 ${isActive && "text-[#0095F6]"}`} />
+      ),
+      content: feeds,
+    },
+    {
+      id: "b",
+      icon: (isActive: boolean) => (
+        <BsBookmark className={`w-4 h-4 ${isActive && "text-[#0095F6]"}`} />
+      ),
+      content: likeFeeds,
+    },
+    {
+      id: "c",
+      icon: (isActive: boolean) => (
+        <BsHeart className={`w-4 h-4 ${isActive && "text-[#0095F6]"}`} />
+      ),
+      content: bookmarkFeeds,
+    },
+  ];
+
+  const [activeTab, setActiveTab] = useState("a");
+
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+  };
+
   const subTitle = () => {
     return (
       <div className="flex flex-col items-start ">
@@ -84,24 +141,44 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="w-full  flex justify-around ">
-          <div className="flex flex-col items-center py-3 border-t border-black w-full">
-            <p className="text-sm text-gray-500">
-              {<BsGrid3X3 className="w-4 h-4 text-[#0095F6]" />}
-            </p>
-          </div>
-          <div className="flex flex-col items-center py-3 border-t w-full">
-            <p className="text-sm text-gray-500">
-              {<BsBookmark className="w-4 h-4" />}
-            </p>
-          </div>
-          <div className="flex flex-col items-center py-3 border-t w-full">
-            {<BsPerson className="w-4 h-4" />}
-          </div>
+        <div className="w-full flex justify-around">
+          {tabs.map((tab) => (
+            <div
+              key={tab.id}
+              className={`flex flex-col items-center py-3  ${
+                activeTab === tab.id && "border-t"
+              } border-black w-full`}
+            >
+              <button key={tab.id} onClick={() => handleTabClick(tab.id)}>
+                {tab.icon(activeTab === tab.id)}
+              </button>
+            </div>
+          ))}
         </div>
 
-        {user.feeds ? (
-          <div className="grid grid-cols-3 ">
+        <div className="grid grid-cols-3">
+          {tabs.map(
+            (tab) =>
+              activeTab === tab.id &&
+              tab.content.map((feed: F) => (
+                <div key={feed.id} className="border-[0.5px]">
+                  <Link href={`/feed/${feed.id}`}>
+                    <div
+                      className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
+                      style={{
+                        backgroundImage: `url('${getBackgroundUrl(
+                          feed.imageUrl!
+                        )}')`,
+                      }}
+                    ></div>
+                  </Link>
+                </div>
+              ))
+          )}
+        </div>
+
+        {/* {user.feeds ? (
+          <div className="grid grid-cols-3">
             {user.feeds.map((feed) => (
               <Feed key={feed.id} feed={feed} imageOnly />
             ))}
@@ -122,10 +199,74 @@ const Profile = () => {
               첫 사진 공유하기
             </h3>
           </div>
-        )}
+        )} */}
       </div>
     </Layout>
   );
 };
 
 export default Profile;
+
+export const getServerSideProps = withSsrSession(
+  async ({ query, req }: NextPageContext) => {
+    const userId = Number(req?.session.user?.id);
+
+    const feeds = await client.instagramFeed.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        imageUrl: true,
+      },
+    });
+
+    const likeFeeds = await client.instagramLike
+      .findMany({
+        where: { userId },
+        select: {
+          feed: {
+            select: {
+              id: true,
+              imageUrl: true,
+            },
+          },
+        },
+      })
+      .then((res) =>
+        res.map((item) => ({
+          id: item.feed.id,
+          imageUrl: item.feed.imageUrl,
+        }))
+      );
+
+    const bookmarkFeeds = await client.instagramBookMark
+      .findMany({
+        where: { userId },
+        select: {
+          feed: {
+            select: {
+              id: true,
+              imageUrl: true,
+            },
+          },
+        },
+      })
+      .then((res) =>
+        res.map((item) => ({
+          id: item.feed.id,
+          imageUrl: item.feed.imageUrl,
+        }))
+      );
+
+    console.log(feeds, "feeds");
+    console.log(likeFeeds, "likeFeeds");
+    console.log(bookmarkFeeds, "bookmarkFeeds");
+
+    return {
+      props: {
+        feeds: JSON.parse(JSON.stringify(feeds)),
+        likeFeeds: JSON.parse(JSON.stringify(likeFeeds)),
+        bookmarkFeeds: JSON.parse(JSON.stringify(bookmarkFeeds)),
+      },
+    };
+  }
+);

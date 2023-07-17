@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import client from "../../lib/server/db";
-import { randomColor } from "../../lib/client/utils";
+import client from "@/lib/server/db";
+import { randomColor } from "@/lib/client/utils";
 
 interface BodyProps {
   email: string;

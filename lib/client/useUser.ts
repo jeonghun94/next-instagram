@@ -1,6 +1,5 @@
 // import { User } from "@prisma/client";
 import { Feeds } from "@/types";
-import { InstagramFeed } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import useSWR from "swr";
