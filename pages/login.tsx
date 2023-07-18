@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import useMutation from "@/lib/client/useMutation";
 import Link from "next/link";
 import Head from "next/head";
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout/AuthLayout";
 
 interface IForm {
   email: string;

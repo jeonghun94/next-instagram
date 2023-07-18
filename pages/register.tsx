@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useMutation from "../lib/client/useMutation";
-import Layout from "../components/layout";
+import Layout from "../components/Layout/AuthLayout";
 import Link from "next/link";
 import Head from "next/head";
 import { AiFillFacebook } from "react-icons/ai";

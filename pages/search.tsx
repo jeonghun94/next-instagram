@@ -2,7 +2,7 @@ import client from "@/lib/server/db";
 import { NextPageContext } from "next";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import Layout from "../components/HomeLayout";
+import Layout from "../components/Layout/MainLayout";
 import { BiSearch } from "react-icons/bi";
 import { Feeds } from "@/types";
 

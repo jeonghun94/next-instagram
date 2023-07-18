@@ -3,7 +3,7 @@ import Link from "next/link";
 import { NextPageContext } from "next";
 import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
-import Layout from "@/components/HomeLayout";
+import Layout from "@/components/Layout/MainLayout";
 import Avatar from "@/components/user/avatar";
 import Feed from "@/components/Feed";
 import useUser from "@/lib/client/useUser";

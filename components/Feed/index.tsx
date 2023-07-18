@@ -12,7 +12,7 @@ import {
 } from "react-icons/bs";
 import useSWR from "swr";
 import useMutation from "@/lib/client/useMutation";
-import { convertTime } from "@/lib/client/utils";
+import { convertTime, getBackgroundUrl } from "@/lib/client/utils";
 import Avatar from "@/components/user/avatar";
 import { Feeds, ReplyWithUser } from "@/types";
 import { useForm } from "react-hook-form";
@@ -52,10 +52,6 @@ const Feed = ({
     Kakao.Link.sendScrap({
       requestUrl: location.href,
     });
-  };
-
-  const getBackgroundUrl = (url: string) => {
-    return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
   };
 
   const hasLongText = feed.text.length > 20;

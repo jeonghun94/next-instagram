@@ -1,13 +1,11 @@
-import { useRouter } from "next/router";
-import { FaArrowLeft } from "react-icons/fa";
-
 import React, { useEffect, useState } from "react";
-import CustomHead from "../CustomHead";
-import { set, useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 import Image from "next/image";
-
+import { FaArrowLeft } from "react-icons/fa";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
-import BottomTabBar from "../BottomTabBar";
+import CustomHead from "../../Head";
+import BottomTabBar from "../../BottomTabBar";
 import useMutation from "@/lib/client/useMutation";
 
 interface LayoutProps {

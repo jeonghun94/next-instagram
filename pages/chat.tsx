@@ -5,7 +5,7 @@ import { InstagramUser } from "@prisma/client";
 import { FaFacebookMessenger } from "react-icons/fa";
 import { BiMessageAdd } from "react-icons/bi";
 import Avatar from "@/components/user/avatar";
-import Layout from "@/components/HomeLayout";
+import Layout from "@/components/Layout/MainLayout";
 
 interface ChatProp {
   id: number;

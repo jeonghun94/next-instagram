@@ -11,7 +11,7 @@ import {
   AiFillCompass,
 } from "react-icons/ai";
 import { CgAddR } from "react-icons/cg";
-import { ModalOverlay } from "../HomeLayout";
+import { ModalOverlay } from "../Layout/MainLayout";
 
 const BottomTabBar = () => {
   const { user } = useUser();

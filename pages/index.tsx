@@ -2,7 +2,7 @@ import { withSsrSession } from "@/lib/server/withSession";
 import { NextPageContext } from "next";
 import client from "@/lib/server/db";
 import { Feeds } from "@/types";
-import Layout from "@/components/HomeLayout";
+import Layout from "@/components/Layout/MainLayout";
 import Stories from "@/components/Stories/inedex";
 import Feed from "@/components/Feed";
 
@@ -40,17 +40,15 @@ export const getServerSideProps = withSsrSession(
       select: { followingId: true },
     });
 
-    const query = {
-      include: {
-        user: true,
-      },
-    };
-
     const feeds = await client.instagramFeed.findMany({
       where: { userId: { in: followingIds.map((item) => item.followingId) } },
       include: {
         user: true,
-        replys: query,
+        replys: {
+          include: {
+            user: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });

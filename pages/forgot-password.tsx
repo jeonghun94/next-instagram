@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useMutation from "../lib/client/useMutation";
-import Layout from "../components/HomeLayout";
+import Layout from "../components/Layout/MainLayout";
 import Link from "next/link";
 import { IoLockClosedOutline } from "react-icons/io5";
 import ErrorText from "@/components/error-text";

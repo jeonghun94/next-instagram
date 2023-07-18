@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import ErrorText from "./error-text";
+import ErrorText from "../../error-text";
 
 interface LayoutProps {
   children: React.ReactNode;
