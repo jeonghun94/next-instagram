@@ -48,3 +48,7 @@ export const intlDate = (date: Date) => {
 export const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+export const getBackgroundUrl = (url: string) => {
+  return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
+};

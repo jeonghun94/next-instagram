@@ -1,74 +1,68 @@
+import { useState } from "react";
 import Link from "next/link";
+import { NextPageContext } from "next";
+import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
+import { AiOutlinePlus } from "react-icons/ai";
 import Layout from "@/components/HomeLayout";
 import Avatar from "@/components/user/avatar";
 import Feed from "@/components/Feed";
 import useUser from "@/lib/client/useUser";
-import { BsGrid3X3, BsBookmark, BsPerson, BsHeart } from "react-icons/bs";
-import { AiOutlinePlus } from "react-icons/ai";
-import { useState } from "react";
 import client from "@/lib/server/db";
 import { withSsrSession } from "@/lib/server/withSession";
-import { NextPageContext } from "next";
+import { getBackgroundUrl } from "@/lib/client/utils";
 
-export interface MutationResult {
-  ok: boolean;
-}
-
-interface Tab {
-  id: string;
-  content: any;
-  icon: (isActive: boolean) => JSX.Element;
-}
-
-interface F {
+interface Feed {
   id: number;
   imageUrl: string;
 }
 
-interface PageProps {
-  feeds: F[];
-  likeFeeds: F[];
-  bookmarkFeeds: F[];
+interface ProfileProps {
+  bookmarkFeeds: Feed[];
+  likeFeeds: Feed[];
+  feeds: Feed[];
 }
 
-const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: PageProps) => {
-  const getBackgroundUrl = (url: string) => {
-    return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
-  };
+const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: ProfileProps) => {
   const { user, isLoading } = useUser();
-  const tabs: Tab[] = [
+  const [activeTab, setActiveTab] = useState<string>("feed");
+
+  const getIcon = (IconComponent: React.ElementType, isActive: boolean) => (
+    <IconComponent className={`w-4 h-4 ${isActive ? "text-[#0095F6]" : ""}`} />
+  );
+
+  const tabs = [
     {
-      id: "a",
-      icon: (isActive: boolean) => (
-        <BsGrid3X3 className={`w-4 h-4 ${isActive && "text-[#0095F6]"}`} />
-      ),
+      id: "feed",
+      icon: (isActive: boolean) => getIcon(BsGrid3X3, isActive),
       content: feeds,
     },
     {
-      id: "b",
-      icon: (isActive: boolean) => (
-        <BsBookmark className={`w-4 h-4 ${isActive && "text-[#0095F6]"}`} />
-      ),
+      id: "likeFeed",
+      icon: (isActive: boolean) => getIcon(BsBookmark, isActive),
       content: likeFeeds,
     },
     {
-      id: "c",
-      icon: (isActive: boolean) => (
-        <BsHeart className={`w-4 h-4 ${isActive && "text-[#0095F6]"}`} />
-      ),
+      id: "bookmarkFeed",
+      icon: (isActive: boolean) => getIcon(BsHeart, isActive),
       content: bookmarkFeeds,
     },
   ];
-
-  const [activeTab, setActiveTab] = useState("a");
 
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
   };
 
-  const subTitle = () => {
+  const renderLoadingState = () => {
     return (
-      <div className="flex flex-col items-start ">
+      <div className="min-h-screen w-full flex justify-center items-center">
+        <h1>Loading</h1>
+      </div>
+    );
+  };
+
+  const renderSubtitle = () => {
+    return (
+      <div className="flex flex-col items-start">
         <h1 className="text-lg font-semibold text-center">{user?.username}</h1>
       </div>
     );
@@ -95,12 +89,32 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: PageProps) => {
     );
   };
 
-  return isLoading ? (
-    <div className="min-h-screen w-full flex justify-center items-center">
-      <h1>Loading</h1>
-    </div>
-  ) : (
-    <Layout isHome={false} pageTitle="Profile" subTitle={subTitle()}>
+  const EmptyFeed = () => {
+    return (
+      <div className="w-full h-auto flex flex-col justify-center items-center gap-3 mt-16">
+        <div className="w-auto h-auto p-3 aspect-square border-[1.5px] border-black rounded-full">
+          <BsCamera className="w-10 h-10" />
+        </div>
+
+        <h1 className="text-3xl font-bold">사진 공유</h1>
+
+        <h3 className="text-sm text-gray-500 font-semibold">
+          사진, 좋아요를 공유하면 회원님의 프로필에 표시됩니다.
+        </h3>
+
+        <h3 className="text-sm text-[#0095F6] font-semibold">
+          첫 사진 공유하기
+        </h3>
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return renderLoadingState();
+  }
+
+  return (
+    <Layout isHome={false} pageTitle="Profile" subTitle={renderSubtitle()}>
       <div>
         <div className="w-full flex items-center gap-5 p-2">
           <Avatar user={user} size={"20"} textSize="3xl" />
@@ -153,50 +167,30 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: PageProps) => {
           ))}
         </div>
 
-        <div className="grid grid-cols-3">
-          {tabs.map(
-            (tab) =>
-              activeTab === tab.id &&
-              tab.content.map((feed: F) => (
-                <div key={feed.id} className="border-[0.5px]">
-                  <Link href={`/feed/${feed.id}`}>
-                    <div
-                      className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
-                      style={{
-                        backgroundImage: `url('${getBackgroundUrl(
-                          feed.imageUrl!
-                        )}')`,
-                      }}
-                    ></div>
-                  </Link>
-                </div>
-              ))
-          )}
-        </div>
-
-        {/* {user.feeds ? (
-          <div className="grid grid-cols-3">
-            {user.feeds.map((feed) => (
-              <Feed key={feed.id} feed={feed} imageOnly />
-            ))}
-          </div>
-        ) : (
-          <div className="w-full h-auto flex flex-col justify-center items-center gap-3 mt-16">
-            <div className="w-auto h-auto p-3 aspect-square border-[1.5px] border-black rounded-full">
-              <BsCamera className="w-10 h-10" />
-            </div>
-
-            <h1 className="text-3xl font-bold">사진 공유</h1>
-
-            <h3 className="text-sm text-gray-500 font-semibold">
-              사진을 공유하면 회원님의 프로필에 표시됩니다.
-            </h3>
-
-            <h3 className="text-sm text-[#0095F6] font-semibold">
-              첫 사진 공유하기
-            </h3>
-          </div>
-        )} */}
+        {tabs.map((tab) => {
+          if (activeTab === tab.id) {
+            return tab.content.length > 0 ? (
+              <div className="grid grid-cols-3">
+                {tab.content.map((feed: Feed) => (
+                  <div key={feed.id} className="border-[0.5px]">
+                    <Link href={`/feed/${feed.id}`}>
+                      <div
+                        className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
+                        style={{
+                          backgroundImage: `url('${getBackgroundUrl(
+                            feed.imageUrl!
+                          )}')`,
+                        }}
+                      ></div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyFeed key={tab.id} />
+            );
+          }
+        })}
       </div>
     </Layout>
   );
@@ -205,7 +199,7 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: PageProps) => {
 export default Profile;
 
 export const getServerSideProps = withSsrSession(
-  async ({ query, req }: NextPageContext) => {
+  async ({ req }: NextPageContext) => {
     const userId = Number(req?.session.user?.id);
 
     const feeds = await client.instagramFeed.findMany({
@@ -254,15 +248,11 @@ export const getServerSideProps = withSsrSession(
         }))
       );
 
-    console.log(feeds, "feeds");
-    console.log(likeFeeds, "likeFeeds");
-    console.log(bookmarkFeeds, "bookmarkFeeds");
-
     return {
       props: {
-        feeds: JSON.parse(JSON.stringify(feeds)),
-        likeFeeds: JSON.parse(JSON.stringify(likeFeeds)),
         bookmarkFeeds: JSON.parse(JSON.stringify(bookmarkFeeds)),
+        likeFeeds: JSON.parse(JSON.stringify(likeFeeds)),
+        feeds: JSON.parse(JSON.stringify(feeds)),
       },
     };
   }
