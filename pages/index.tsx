@@ -33,15 +33,15 @@ export default Home;
 
 export const getServerSideProps = withSsrSession(
   async ({ req }: NextPageContext) => {
-    const followerId = Number(req?.session.user?.id);
+    // const followerId = Number(req?.session.user?.id);
 
-    const followingIds = await client.instagramFollows.findMany({
-      where: { followerId },
-      select: { followingId: true },
-    });
+    // const followingIds = await client.instagramFollows.findMany({
+    //   where: { followerId },
+    //   select: { followingId: true },
+    // });
 
     const feeds = await client.instagramFeed.findMany({
-      where: { userId: { in: followingIds.map((item) => item.followingId) } },
+      // where: { userId: { in: followingIds.map((item) => item.followingId) } },
       include: {
         user: true,
         replys: {

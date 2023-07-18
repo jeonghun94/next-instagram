@@ -62,6 +62,17 @@ export default Chat;
 
 export const getServerSideProps = withSsrSession(
   async ({ req }: NextPageContext) => {
+    const user = req?.session.user;
+
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
     const followingUsers = await client.instagramFollows.findMany({
       where: {
         followerId: Number(req?.session.user?.id),

@@ -10,16 +10,17 @@ import {
   AiOutlineCompass,
   AiFillCompass,
 } from "react-icons/ai";
+import { BiUserCircle } from "react-icons/bi";
 import { CgAddR } from "react-icons/cg";
 import { ModalOverlay } from "../Layout/MainLayout";
 
 const BottomTabBar = () => {
-  const { user } = useUser();
   const router = useRouter();
-
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => {
+    if (!user) return router.push("/login");
     setIsOpen((prevIsOpen) => !prevIsOpen);
   };
 
@@ -45,12 +46,21 @@ const BottomTabBar = () => {
       <button onClick={toggleModal}>
         <CgAddR className="w-6 h-6" />
       </button>
+
       <Link href="/chat">
         {renderIcon("/chat", IoPaperPlaneSharp, IoPaperPlaneOutline)}
       </Link>
-      <Link href="/profile">
-        <Avatar size="7" user={user} textSize="sm" />
-      </Link>
+
+      {user ? (
+        <Link href="/profile">
+          <Avatar size="7" user={user} textSize="sm" />
+        </Link>
+      ) : (
+        <Link href="/login">
+          <BiUserCircle className="w-7 h-7" />
+        </Link>
+      )}
+
       <ModalOverlay isOpen={isOpen} onClose={toggleModal} />
     </div>
   );

@@ -7,6 +7,7 @@ import { BiSearch } from "react-icons/bi";
 import { Feeds } from "@/types";
 
 import Feed from "@/components/Feed";
+import { withSsrSession } from "@/lib/server/withSession";
 
 interface FeedsProps {
   feeds: Feeds[];
@@ -51,18 +52,30 @@ const Feeds = ({ feeds }: FeedsProps) => {
 
 export default Feeds;
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
-  const { text } = ctx.query;
+export const getServerSideProps = withSsrSession(
+  async ({ req, query }: NextPageContext) => {
+    const user = req?.session.user;
 
-  const feeds = await client.instagramFeed.findMany({
-    ...(text ? { where: { text: { contains: String(text) } } } : {}),
-    include: { user: true },
-    orderBy: { createdAt: "desc" },
-  });
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+    const { text } = query;
 
-  return {
-    props: {
-      feeds: JSON.parse(JSON.stringify(feeds)),
-    },
-  };
-};
+    const feeds = await client.instagramFeed.findMany({
+      ...(text ? { where: { text: { contains: String(text) } } } : {}),
+      include: { user: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return {
+      props: {
+        feeds: JSON.parse(JSON.stringify(feeds)),
+      },
+    };
+  }
+);
