@@ -155,9 +155,13 @@ const Feed = ({
                 <BsHeart className="w-6 h-6" />
               )}
             </button>
-            <Link href={`/feed/${feed.id}`} className="-mt-1">
-              <BsChat className="w-6 h-6" />
-            </Link>
+
+            {!includeReplyForm && (
+              <Link href={`/feed/${feed.id}`} className="-mt-1">
+                <BsChat className="w-6 h-6" />
+              </Link>
+            )}
+
             <button className="-ml-1" onClick={onClick}>
               <IoPaperPlaneOutline className="w-6 h-6" />
             </button>
