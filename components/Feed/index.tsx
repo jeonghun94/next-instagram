@@ -40,6 +40,20 @@ const Feed = ({
 }: FeedProps) => {
   const [textExpanded, setTextExpanded] = useState<boolean>(false);
 
+  useEffect(() => {
+    const kakao = window.Kakao;
+    if (!kakao.isInitialized()) {
+      kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY);
+    }
+  }, []);
+
+  const onClick = () => {
+    const { Kakao, location } = window;
+    Kakao.Link.sendScrap({
+      requestUrl: location.href,
+    });
+  };
+
   const getBackgroundUrl = (url: string) => {
     return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
   };
@@ -144,7 +158,7 @@ const Feed = ({
             <Link href={`/feed/${feed.id}`} className="-mt-1">
               <BsChat className="w-6 h-6" />
             </Link>
-            <button className="-ml-1">
+            <button className="-ml-1" onClick={onClick}>
               <IoPaperPlaneOutline className="w-6 h-6" />
             </button>
           </div>

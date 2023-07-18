@@ -32,9 +32,6 @@ interface PageProps {
 }
 
 const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: PageProps) => {
-  const grid = (feeds: F[]) => {
-    return feeds.map((feed) => <div>{feed.id}</div>);
-  };
   const getBackgroundUrl = (url: string) => {
     return `https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${url}/public`;
   };
