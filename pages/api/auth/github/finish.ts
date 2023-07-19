@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { withApiSession } from "@/lib/server/withSession";
-import withHandler from "@/lib/server/withHandler";
-import client from "../../../../lib/server/db";
 import { randomColor } from "@/lib/client/utils";
+import withHandler from "@/lib/server/withHandler";
+import client from "@/lib/server/db";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const baseUrl = "https://github.com/login/oauth/access_token";
@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       })
     ).json();
-    console.log(userData);
+    // console.log(userData, "유저데이터");
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -45,10 +45,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     if (!emailObj) {
-      return res.redirect("/log-in");
+      return res.redirect("/login");
     }
 
-    const existingUser = await client.user.findUnique({
+    const existingUser = await client.instagramUser.findUnique({
       where: {
         email: emailObj.email,
       },
@@ -58,18 +58,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await req.session.save();
       return res.redirect("/");
     } else {
-      const user = await client.user.create({
+      const user = await client.instagramUser.create({
         data: {
           email: emailObj.email,
           name: userData.name,
+          username: userData.login,
+          password: "",
           color: randomColor().toUpperCase(),
         },
       });
       req.session.user = user;
+
       return res.redirect("/");
     }
   } else {
-    return res.redirect("/log-in");
+    return res.redirect("/login");
   }
 };
 

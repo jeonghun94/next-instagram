@@ -5,6 +5,7 @@ import useMutation from "../lib/client/useMutation";
 import Layout from "../components/Layout/AuthLayout";
 import Head from "next/head";
 import { AiFillGithub } from "react-icons/ai";
+import Link from "next/link";
 
 interface IForm {
   email: string;
@@ -43,7 +44,7 @@ const Login = () => {
   }, [data]);
 
   return (
-    <Layout isLogin error={error}>
+    <Layout isLogin={false} error={error}>
       <Head>
         <title>가입하기 • Instagram</title>
         <link
@@ -62,9 +63,12 @@ const Login = () => {
           친구들의 사진과 동영상을 보려면 가입하세요.
         </p>
 
-        <button className="flex justify-center gap-1 items-center bg-[#24292E] w-full py-2 text-white rounded-lg mb-1 text-sm ">
+        <Link
+          href="/api/auth/github/start"
+          className="flex justify-center gap-1 items-center bg-[#24292E] w-full py-2 text-white rounded-lg mb-1 text-sm "
+        >
           <AiFillGithub className="text-xl" /> Github 계정으로 로그인
-        </button>
+        </Link>
 
         <div className="w-full grid grid-cols-10 place-items-center my-2">
           <div className="w-full col-span-4 h-1 border-b border-gray-300 divide-x-2"></div>

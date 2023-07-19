@@ -12,9 +12,7 @@ export default function Layout({ children, isLogin, error }: LayoutProps) {
   return (
     <div className="w-full min-h-screen flex justify-center ">
       <div
-        className={`w-full h-full mx-4 p-4 px-4 flex flex-col justify-center items-center ${
-          isLogin ? "mt-12" : ""
-        }`}
+        className={`w-full h-full mx-4 p-4 px-4 flex flex-col justify-center items-center mt-12`}
       >
         {children}
 

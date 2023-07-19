@@ -202,6 +202,15 @@ export const getServerSideProps = withSsrSession(
   async ({ req }: NextPageContext) => {
     const userId = Number(req?.session.user?.id);
 
+    if (!userId) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
     const feeds = await client.instagramFeed.findMany({
       where: { userId },
       select: {
