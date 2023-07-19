@@ -16,6 +16,7 @@ import { convertTime, getBackgroundUrl } from "@/lib/client/utils";
 import Avatar from "@/components/user/avatar";
 import { Feeds, ReplyWithUser } from "@/types";
 import { useForm } from "react-hook-form";
+import Popup from "../Popup";
 
 interface FeedProps {
   includeUser?: boolean;
@@ -198,9 +199,10 @@ const Feed = ({
             )}
 
             {feed.replys?.length > 0 && (
-              <Link href={`/feed/${feed.id}`} className="text-sm text-gray-700">
-                {`댓글 ${feed.replys.length}개 모두 보기`}
-              </Link>
+              // <button className="text-sm text-gray-700">
+              //   {`댓글 ${feed.replys.length}개 모두 보기`}
+              // </button>
+              <Popup repliesLength={feed.replys.length} replies={replys} />
             )}
           </div>
           <hr className="my-6" />
