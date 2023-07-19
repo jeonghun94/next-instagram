@@ -217,9 +217,9 @@ const Layout = ({
 
   return (
     <div className="w-full min-h-screen flex flex-col pb-7">
+      <CustomHead pageTitle={pageTitle} />
       {header && (
         <>
-          <CustomHead pageTitle={pageTitle} />
           <div
             className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white z-10`}
           >

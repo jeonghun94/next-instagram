@@ -20,7 +20,7 @@ export default function Layout({ children, isLogin, error }: LayoutProps) {
 
         <div className="p-5 my-3 border w-full text-sm text-black text-center font-medium ">
           {isLogin ? "계정이 없으신가요?" : "이미 계정이 있으신가요?"}{" "}
-          <Link href={isLogin ? "/register" : "login"}>
+          <Link href={isLogin ? "/sign-up" : "login"}>
             <button className="text-[#1C9BEF] cursor-pointer">
               {isLogin ? "가입하기" : "로그인"}
             </button>

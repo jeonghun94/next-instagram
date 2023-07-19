@@ -67,7 +67,7 @@ export const getServerSideProps = withSsrSession(
     const { text } = query;
 
     const feeds = await client.instagramFeed.findMany({
-      ...(text ? { where: { text: { contains: String(text) } } } : {}),
+      ...(text ? { where: { text: { contains: `${text}` } } } : {}),
       include: { user: true },
       orderBy: { createdAt: "desc" },
     });

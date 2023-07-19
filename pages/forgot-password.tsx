@@ -97,7 +97,7 @@ export default function ResetPassword() {
             <div className="w-full col-span-4 h-1 border-b border-gray-300 divide-x-2"></div>
           </div>
           <Link
-            href="/register"
+            href="/sign-up"
             className="flex justify-center items-center text-sm gap-2 rounded-3xl p-1 w-full font-semibold cursor-pointer placeholder:text-gray-600 focus:outline-none"
           >
             새 계정 만들기

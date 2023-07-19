@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -126,6 +127,7 @@ model InstagramFeed {
   bookmarks InstagramBookMark[]
 
   @@index([userId], name: "userId")
+  @@fulltext([text])
 }
 
 model InstagramLike {

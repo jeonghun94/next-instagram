@@ -170,7 +170,7 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: ProfileProps) => {
         {tabs.map((tab) => {
           if (activeTab === tab.id) {
             return tab.content.length > 0 ? (
-              <div className="grid grid-cols-3">
+              <div key={tab.id} className="grid grid-cols-3">
                 {tab.content.map((feed: Feed) => (
                   <div key={feed.id} className="border-[0.5px]">
                     <Link href={`/feed/${feed.id}`}>
