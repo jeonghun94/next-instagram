@@ -54,14 +54,21 @@ export const getServerSideProps = withSsrSession(
   async ({ req }: NextPageContext) => {
     const followerId = Number(req?.session.user?.id);
 
+    if (!followerId) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
     const followingUsersInfo = await client.instagramFollows.findMany({
       where: { followerId },
       include: {
         following: true,
       },
     });
-
-    console.log(followingUsersInfo);
 
     const feeds = await client.instagramFeed.findMany({
       // where: { userId: { in: followingIds.map((item) => item.followingId) } },
