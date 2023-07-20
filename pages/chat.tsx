@@ -4,7 +4,7 @@ import { withSsrSession } from "@/lib/server/withSession";
 import { InstagramUser } from "@prisma/client";
 import { FaFacebookMessenger } from "react-icons/fa";
 import { BiMessageAdd } from "react-icons/bi";
-import Avatar from "@/components/User/Avatar";
+import Avatar from "@/components/Avatar";
 import Layout from "@/components/Layout/MainLayout";
 
 interface ChatProp {

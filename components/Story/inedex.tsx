@@ -1,5 +1,5 @@
 import { InstagramUser } from "@prisma/client";
-import Avatar from "../User/Avatar";
+import Avatar from "../Avatar";
 import { FaPlus } from "react-icons/fa";
 
 interface StoryProps {

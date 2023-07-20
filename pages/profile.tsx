@@ -4,7 +4,7 @@ import { NextPageContext } from "next";
 import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 import Layout from "@/components/Layout/MainLayout";
-import Avatar from "@/components/User/Avatar";
+import Avatar from "@/components/Avatar";
 import Feed from "@/components/Feed";
 import useUser from "@/lib/client/useUser";
 import client from "@/lib/server/db";
