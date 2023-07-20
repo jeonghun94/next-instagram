@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import useUser from "@/lib/client/useUser";
 import Link from "next/link";
-import Avatar from "../User/avatar";
+import Avatar from "../User/Avatar";
 import { IoPaperPlaneOutline, IoPaperPlaneSharp } from "react-icons/io5";
 import {
   AiFillHome,

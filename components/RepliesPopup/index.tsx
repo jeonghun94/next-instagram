@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { convertTime } from "@/lib/client/utils";
 import { ReplyWithUser } from "@/types";
-import Avatar from "../User/avatar";
+import Avatar from "../User/Avatar";
 
 interface RepliesPopupProps {
   replies: ReplyWithUser[];

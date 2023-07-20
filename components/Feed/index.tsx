@@ -13,7 +13,7 @@ import {
 import useSWR from "swr";
 import useMutation from "@/lib/client/useMutation";
 import { convertTime, getBackgroundUrl } from "@/lib/client/utils";
-import Avatar from "@/components/User/avatar";
+import Avatar from "@/components/User/Avatar";
 import { Feeds, ReplyWithUser } from "@/types";
 import { useForm } from "react-hook-form";
 import RepliesPopup from "../RepliesPopup";
