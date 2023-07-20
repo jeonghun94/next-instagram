@@ -25,7 +25,7 @@ async function handler(
           name: true,
         },
       },
-      _count: { select: { replys: true, likes: true } },
+      _count: { select: { replies: true, likes: true } },
     },
     orderBy: { createdAt: "desc" },
   });

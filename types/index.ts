@@ -28,7 +28,7 @@ export interface FeedWithBookmarks extends FeedWithUser {
 
 export interface Feeds extends FeedWithUser {
   bookmarks: InstagramBookMark[];
-  replys: ReplyWithUser[];
+  replies: ReplyWithUser[];
   likes: InstagramLike[];
   isLiked?: boolean;
   isBookmarked?: boolean;

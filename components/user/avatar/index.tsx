@@ -4,14 +4,17 @@ interface PageProps {
   textSize: string;
   size: string;
   user: User;
+  hasRing?: boolean;
 }
 
-const Avatar = ({ user, size, textSize = "md" }: PageProps) => {
+const Avatar = ({ user, size, textSize = "md", hasRing }: PageProps) => {
   return (
     user && (
       <div
         className={`flex justify-center items-center h-${size} w-${size}
-      }  aspect-square rounded-full ${`text-${textSize}`}  font-semibold border text-white`}
+      }  aspect-square rounded-full ${`text-${textSize}`} ${
+          hasRing ? "ring-1 ring-gray-300" : ""
+        } font-semibold border text-white`}
         style={{
           backgroundColor: String(user?.color),
           backgroundImage: `url(https://imagedelivery.net/jhi2XPYSyyyjQKL_zc893Q/${user?.avatarUrl}/avatar)`,

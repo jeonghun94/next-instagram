@@ -13,10 +13,10 @@ import {
 import useSWR from "swr";
 import useMutation from "@/lib/client/useMutation";
 import { convertTime, getBackgroundUrl } from "@/lib/client/utils";
-import Avatar from "@/components/user/avatar";
+import Avatar from "@/components/User/avatar";
 import { Feeds, ReplyWithUser } from "@/types";
 import { useForm } from "react-hook-form";
-import Popup from "../Popup";
+import RepliesPopup from "../RepliesPopup";
 
 interface FeedProps {
   includeUser?: boolean;
@@ -68,7 +68,7 @@ const Feed = ({
   const [toggleLikeMutation] = useMutation(`/api/feed/${feed.id}/like`);
   const [addReply, { data }] = useMutation(`/api/feed/${feed.id}/reply`);
 
-  const [replys, setReplys] = useState<ReplyWithUser[]>(feed.replys || []);
+  const [replies, setReplies] = useState<ReplyWithUser[]>(feed.replies || []);
 
   const onSubmit = ({ text }: FormProps) => {
     addReply({ text });
@@ -77,7 +77,7 @@ const Feed = ({
 
   useEffect(() => {
     if (!data) return;
-    setReplys((prev) => [data.reply, ...prev]);
+    setReplies((prev) => [data.reply, ...prev]);
   }, [data]);
 
   const toggleLikeStatus = () => {
@@ -198,12 +198,7 @@ const Feed = ({
               </p>
             )}
 
-            {feed.replys?.length > 0 && (
-              // <button className="text-sm text-gray-700">
-              //   {`댓글 ${feed.replys.length}개 모두 보기`}
-              // </button>
-              <Popup repliesLength={feed.replys.length} replies={replys} />
-            )}
+            {feed.replies?.length > 0 && <RepliesPopup replies={replies} />}
           </div>
           <hr className="my-6" />
         </>
@@ -236,8 +231,8 @@ const Feed = ({
 
       {includeReplyForm && (
         <div className="w-full my-3 flex flex-col items-start gap-2 mb-10">
-          {replys.length > 0 ? (
-            replys.map((reply) => (
+          {replies.length > 0 ? (
+            replies.map((reply) => (
               <div key={reply?.id} className="w-full flex flex-col gap-3">
                 <div className="w-full flex items-center">
                   <div className="w-full flex justify-between items-center py-1">

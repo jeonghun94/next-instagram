@@ -8,7 +8,7 @@ import { InstagramUser } from "@prisma/client";
 import useMutation from "@/lib/client/useMutation";
 import Layout from "@/components/Layout/MainLayout";
 import ErrorText from "@/components/error-text";
-import Avatar from "@/components/user/avatar";
+import Avatar from "@/components/User/avatar";
 import Image from "next/image";
 
 interface FormProps {

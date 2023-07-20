@@ -13,7 +13,7 @@ async function handler(
         user: true,
         _count: {
           select: {
-            replys: true,
+            replies: true,
             likes: true,
           },
         },

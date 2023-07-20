@@ -3,17 +3,36 @@ import { NextPageContext } from "next";
 import client from "@/lib/server/db";
 import { Feeds } from "@/types";
 import Layout from "@/components/Layout/MainLayout";
-import Stories from "@/components/Stories/inedex";
+import Story from "@/components/Story/inedex";
 import Feed from "@/components/Feed";
+import { InstagramUser } from "@prisma/client";
+import useUser from "@/lib/client/useUser";
+
+interface FollowingUserInfo {
+  id: number;
+  followingId: number;
+  followerId: number;
+  following: InstagramUser;
+}
 
 interface FeedsProps {
   feeds: Feeds[];
+  followingUsersInfo: FollowingUserInfo[];
 }
 
-const Home = ({ feeds }: FeedsProps) => {
+const Home = ({ feeds, followingUsersInfo }: FeedsProps) => {
+  const { user, isLoading } = useUser();
+
+  if (isLoading) return;
+
   return (
     <Layout isHome>
-      <Stories />
+      <div className="w-full flex gap-5 py-6 px-2 overflow-x-auto ">
+        <Story user={user} isMe />
+        {followingUsersInfo.map((item) => (
+          <Story key={item.id} user={item.following} />
+        ))}
+      </div>
       <div className="px-4">
         {feeds.map((feed) => (
           <Feed
@@ -33,20 +52,27 @@ export default Home;
 
 export const getServerSideProps = withSsrSession(
   async ({ req }: NextPageContext) => {
-    // const followerId = Number(req?.session.user?.id);
+    const followerId = Number(req?.session.user?.id);
 
-    // const followingIds = await client.instagramFollows.findMany({
-    //   where: { followerId },
-    //   select: { followingId: true },
-    // });
+    const followingUsersInfo = await client.instagramFollows.findMany({
+      where: { followerId },
+      include: {
+        following: true,
+      },
+    });
+
+    console.log(followingUsersInfo);
 
     const feeds = await client.instagramFeed.findMany({
       // where: { userId: { in: followingIds.map((item) => item.followingId) } },
       include: {
         user: true,
-        replys: {
+        replies: {
           include: {
             user: true,
+          },
+          orderBy: {
+            createdAt: "desc",
           },
         },
       },
@@ -56,6 +82,7 @@ export const getServerSideProps = withSsrSession(
     return {
       props: {
         feeds: JSON.parse(JSON.stringify(feeds)),
+        followingUsersInfo: JSON.parse(JSON.stringify(followingUsersInfo)),
       },
     };
   }

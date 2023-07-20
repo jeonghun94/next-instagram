@@ -21,7 +21,7 @@ async function handler(
       where: { id: Number(id) },
       include: {
         user: true,
-        replys: {
+        replies: {
           include: {
             user: true,
           },
@@ -32,7 +32,7 @@ async function handler(
 
     return res.json({
       ok: true,
-      replys: feed?.replys,
+      replys: feed?.replies,
     });
   } else {
     const newNeply = await client.instagramReply.create({

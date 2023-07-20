@@ -98,7 +98,7 @@ model InstagramUser {
   following     InstagramFollows[]  @relation("following")
   feeds         InstagramFeed[]
   likes         InstagramLike[]
-  replys        InstagramReply[]
+  replies       InstagramReply[]
   bookmarks     InstagramBookMark[]
 }
 
@@ -123,7 +123,7 @@ model InstagramFeed {
   imageUrl  String?
   views     Int                 @default(0)
   likes     InstagramLike[]
-  replys    InstagramReply[]
+  replies   InstagramReply[]
   bookmarks InstagramBookMark[]
 
   @@index([userId], name: "userId")

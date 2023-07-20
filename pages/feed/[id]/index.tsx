@@ -29,7 +29,7 @@ export const getServerSideProps = withSsrSession(
       where: { id: Number(id) },
       include: {
         user: true,
-        replys: {
+        replies: {
           include: {
             user: true,
           },
