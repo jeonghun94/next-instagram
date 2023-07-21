@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form";
 import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
-import CustomHead from "../../Head";
-import BottomTabBar from "../../BottomTabBar";
+// import CustomHead from "../../Head";
+// import BottomTabBar from "../../BottomTabBar";
+import CustomHead from "@/components/Head";
+import BottomTabBar from "@/components/BottomTabBar";
 import useMutation from "@/lib/client/useMutation";
 
 interface LayoutProps {
@@ -192,7 +194,7 @@ export const ModalOverlay = ({
               className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
               onClick={onClose}
             >
-              닫기
+              공유하기
             </button>
           </div>
         </form>
@@ -221,7 +223,7 @@ const Layout = ({
       {header && (
         <>
           <div
-            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white z-10`}
+            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white `}
           >
             {isHome ? (
               <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
