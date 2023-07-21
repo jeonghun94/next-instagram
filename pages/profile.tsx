@@ -10,20 +10,38 @@ import useUser from "@/lib/client/useUser";
 import client from "@/lib/server/db";
 import { withSsrSession } from "@/lib/server/withSession";
 import { getBackgroundUrl } from "@/lib/client/utils";
+import { FeedWithUser } from "@/types";
+import { InstagramUser } from "@prisma/client";
 
 interface Feed {
   id: number;
   imageUrl: string;
 }
 
+interface UserWithCount extends InstagramUser {
+  _count: {
+    feeds?: number;
+    followers: number;
+    following: number;
+  };
+}
+
 interface ProfileProps {
   bookmarkFeeds: Feed[];
   likeFeeds: Feed[];
   feeds: Feed[];
+  isMe?: boolean;
+  user: UserWithCount;
 }
 
-const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: ProfileProps) => {
-  const { user, isLoading } = useUser();
+const Profile = ({
+  feeds,
+  likeFeeds,
+  bookmarkFeeds,
+  isMe,
+  user,
+}: ProfileProps) => {
+  // const { user, isLoading } = useUser();
   const [activeTab, setActiveTab] = useState<string>("feed");
 
   const getIcon = (IconComponent: React.ElementType, isActive: boolean) => (
@@ -96,22 +114,23 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: ProfileProps) => {
           <BsCamera className="w-10 h-10" />
         </div>
 
-        <h1 className="text-3xl font-bold">사진 공유</h1>
+        <h1 className="text-3xl font-bold">게시글 없음</h1>
+        {/* <h1 className="text-3xl font-bold">사진 공유</h1> */}
 
-        <h3 className="text-sm text-gray-500 font-semibold">
+        {/* <h3 className="text-sm text-gray-500 font-semibold">
           사진, 좋아요를 공유하면 회원님의 프로필에 표시됩니다.
         </h3>
 
         <h3 className="text-sm text-[#0095F6] font-semibold">
           첫 사진 공유하기
-        </h3>
+        </h3> */}
       </div>
     );
   };
 
-  if (isLoading) {
-    return renderLoadingState();
-  }
+  // if (isLoading) {
+  //   return renderLoadingState();
+  // }
 
   return (
     <Layout isHome={false} pageTitle="Profile" subTitle={renderSubtitle()}>
@@ -124,7 +143,7 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: ProfileProps) => {
               href="/edit-profile"
               className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
             >
-              프로필 편집
+              {isMe ? "프로필 편집" : "팔로우"}
             </Link>
           </div>
         </div>
@@ -199,8 +218,28 @@ const Profile = ({ feeds, likeFeeds, bookmarkFeeds }: ProfileProps) => {
 export default Profile;
 
 export const getServerSideProps = withSsrSession(
-  async ({ req }: NextPageContext) => {
+  async ({ req, query }: NextPageContext) => {
     const userId = Number(req?.session.user?.id);
+    const pathId = Number(query?.id);
+    const isMe = !pathId ? true : pathId === userId ? true : false;
+
+    const user = await client.instagramUser.findUnique({
+      where: { id: pathId ? pathId : userId },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        avatarUrl: true,
+        color: true,
+        _count: {
+          select: {
+            feeds: true,
+            followers: true,
+            following: true,
+          },
+        },
+      },
+    });
 
     if (!userId) {
       return {
@@ -212,7 +251,7 @@ export const getServerSideProps = withSsrSession(
     }
 
     const feeds = await client.instagramFeed.findMany({
-      where: { userId },
+      where: { userId: pathId ? pathId : userId },
       select: {
         id: true,
         imageUrl: true,
@@ -221,7 +260,8 @@ export const getServerSideProps = withSsrSession(
 
     const likeFeeds = await client.instagramLike
       .findMany({
-        where: { userId },
+        // where: { userId },
+        where: { userId: pathId ? pathId : userId },
         select: {
           feed: {
             select: {
@@ -240,7 +280,8 @@ export const getServerSideProps = withSsrSession(
 
     const bookmarkFeeds = await client.instagramBookMark
       .findMany({
-        where: { userId },
+        // where: { userId },
+        where: { userId: pathId ? pathId : userId },
         select: {
           feed: {
             select: {
@@ -262,6 +303,8 @@ export const getServerSideProps = withSsrSession(
         bookmarkFeeds: JSON.parse(JSON.stringify(bookmarkFeeds)),
         likeFeeds: JSON.parse(JSON.stringify(likeFeeds)),
         feeds: JSON.parse(JSON.stringify(feeds)),
+        isMe,
+        user,
       },
     };
   }

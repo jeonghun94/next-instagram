@@ -13,6 +13,7 @@ export interface ITweets {
 export interface FeedWithUser extends InstagramFeed {
   user: InstagramUser;
   _count: {
+    feeds?: number;
     replys: number;
     likes: number;
   };

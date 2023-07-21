@@ -109,7 +109,10 @@ const Feed = ({
       {includeUser && (
         <div className="h-10 my-2">
           <div className="w-full h-full flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <Link
+              href={`/profile?id=${feed.user.id}`}
+              className="flex items-center gap-3"
+            >
               <Avatar user={feed.user} size="10" textSize="xl" />
               <div>
                 <p className="text-sm font-semibold">
@@ -120,7 +123,7 @@ const Feed = ({
                 </p>
                 <p className="text-xs text-gray-500">Seoul, Korea</p>
               </div>
-            </div>
+            </Link>
 
             <button>
               <BsThreeDots />

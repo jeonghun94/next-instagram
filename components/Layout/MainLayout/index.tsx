@@ -223,7 +223,7 @@ const Layout = ({
       {header && (
         <>
           <div
-            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white `}
+            className={`px-4 py-4 flex items-center border-b border-gray-250 sticky top-0 bg-white z-10`}
           >
             {isHome ? (
               <i className=" w-[103px] h-[30px] bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover" />
