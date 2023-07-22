@@ -26,6 +26,7 @@ interface UserProps {
     };
   };
   isLoading: boolean;
+  isSocialUser: boolean;
 }
 
 export default function useUser(): UserProps {

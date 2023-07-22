@@ -181,7 +181,7 @@ const Feed = ({
               )}
             </>
           )}
-          {feedImageUrls.length > 1 && (
+          {!includeReplyForm && feedImageUrls.length > 1 && (
             <div className="absolute w-full flex justify-center  bottom-0 z-50  left-0 right-0 ">
               {feedImageUrls.map((url) => (
                 <div key={url}>
