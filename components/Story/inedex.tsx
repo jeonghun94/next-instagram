@@ -30,13 +30,18 @@ export const SStory = ({ text, isNew }: { text: string; isNew?: boolean }) => {
 };
 
 const Story = ({ user, isMe }: StoryProps) => {
-  const handleClick = () => {
-    alert("서비스 준비중 입니다.");
-  };
+  // const handleClick = () => {
+  //   alert("서비스 준비중 입니다.");
+  // };
+
+  const username =
+    user.username.length > 7
+      ? user.username.slice(0, 7) + "..."
+      : user.username;
 
   return (
     <div
-      onClick={handleClick}
+      // onClick={handleClick}
       className="relative flex flex-col items-center gap-2 cursor-pointer"
     >
       <Avatar user={user} textSize="xl" size="14" hasRing />
@@ -45,7 +50,7 @@ const Story = ({ user, isMe }: StoryProps) => {
           <FaPlus size={10} />
         </div>
       )}
-      <p className="text-sm">{isMe ? "내 스토리" : user.username}</p>
+      <p className="text-sm">{isMe ? "내 스토리" : username}</p>
     </div>
   );
 };
