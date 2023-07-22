@@ -17,6 +17,7 @@ interface UserProps {
     avatarUrl: string | null;
     backgroundUrl: string | null;
     feeds: Feeds[];
+    isSocialUser: boolean;
     _count: {
       followers: number;
       following: number;
@@ -26,7 +27,6 @@ interface UserProps {
     };
   };
   isLoading: boolean;
-  isSocialUser: boolean;
 }
 
 export default function useUser(): UserProps {
