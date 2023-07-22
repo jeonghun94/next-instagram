@@ -1,18 +1,17 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { NextPageContext } from "next";
 import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
-import { AiOutlinePlus } from "react-icons/ai";
+import { InstagramUser } from "@prisma/client";
 import Layout from "@/components/Layout/MainLayout";
 import Avatar from "@/components/Avatar";
 import Feed from "@/components/Feed";
-import useUser from "@/lib/client/useUser";
+import { SStory } from "@/components/Story/inedex";
 import client from "@/lib/server/db";
 import { withSsrSession } from "@/lib/server/withSession";
-import { getBackgroundUrl } from "@/lib/client/utils";
-import { FeedWithUser } from "@/types";
-import { InstagramUser } from "@prisma/client";
 import useMutation from "@/lib/client/useMutation";
+import { getBackgroundUrl } from "@/lib/client/utils";
+import { MutationResponse } from "@/types";
 
 interface Feed {
   id: number;
@@ -46,7 +45,9 @@ const Profile = ({
 }: ProfileProps) => {
   const [activeTab, setActiveTab] = useState<string>("feed");
   const [isFollowed, setIsFollowed] = useState<boolean>(isFollowing);
-  const [toggleFollow] = useMutation(`/api/user/following/${user.id}`);
+  const [toggleFollow] = useMutation<MutationResponse>(
+    `/api/user/following/${user.id}`
+  );
 
   const handleFollow = () => {
     setIsFollowed((prev) => !prev);
@@ -65,16 +66,19 @@ const Profile = ({
       id: "feed",
       icon: (isActive: boolean) => getIcon(BsGrid3X3, isActive),
       content: feeds,
-    },
-    {
-      id: "likeFeed",
-      icon: (isActive: boolean) => getIcon(BsBookmark, isActive),
-      content: likeFeeds,
+      isFeed: true,
     },
     {
       id: "bookmarkFeed",
-      icon: (isActive: boolean) => getIcon(BsHeart, isActive),
+      icon: (isActive: boolean) => getIcon(BsBookmark, isActive),
       content: bookmarkFeeds,
+      isFeed: false,
+    },
+    {
+      id: "likeFeed",
+      content: likeFeeds,
+      icon: (isActive: boolean) => getIcon(BsHeart, isActive),
+      isFeed: false,
     },
   ];
 
@@ -86,44 +90,28 @@ const Profile = ({
     );
   };
 
-  const Story = ({ text, isNew }: { text: string; isNew?: boolean }) => {
-    return (
-      <div className="flex flex-col items-center gap-2">
-        <div
-          className={`${
-            isNew ? "bg-[#FAFAFA]" : ""
-          }  w-12 h-12 aspect-square border ring-1 ring-gray-300 ring-offset-1 rounded-full`}
-        >
-          {isNew && (
-            <div className="w-full h-full flex justify-center items-center">
-              <button type="button">
-                <AiOutlinePlus className="w-6 h-6 text-gray-400" />
-              </button>
-            </div>
-          )}
-        </div>
-        <p className="text-xs">{text}</p>
-      </div>
-    );
-  };
-
-  const EmptyFeed = () => {
+  const EmptyFeed = ({ isFeed }: { isFeed: boolean }) => {
     return (
       <div className="w-full h-auto flex flex-col justify-center items-center gap-3 mt-16">
         <div className="w-auto h-auto p-3 aspect-square border-[1.5px] border-black rounded-full">
           <BsCamera className="w-10 h-10" />
         </div>
+        <h1 className="text-3xl font-bold">
+          {" "}
+          {isFeed ? "사진 공유" : "게시글 없음"}
+        </h1>
 
-        <h1 className="text-3xl font-bold">게시글 없음</h1>
-        {/* <h1 className="text-3xl font-bold">사진 공유</h1> */}
+        {isFeed && (
+          <>
+            <h3 className="text-sm text-gray-500 font-semibold">
+              사진, 좋아요를 공유하면 회원님의 프로필에 표시됩니다.
+            </h3>
 
-        {/* <h3 className="text-sm text-gray-500 font-semibold">
-          사진, 좋아요를 공유하면 회원님의 프로필에 표시됩니다.
-        </h3>
-
-        <h3 className="text-sm text-[#0095F6] font-semibold">
-          첫 사진 공유하기
-        </h3> */}
+            <h3 className="text-sm text-[#0095F6] font-semibold">
+              첫 사진 공유하기
+            </h3>
+          </>
+        )}
       </div>
     );
   };
@@ -157,11 +145,8 @@ const Profile = ({
           <p className="text-sm  font-semibold">{user.name}</p>
         </div>
         <div className="flex items-center gap-4 mt-5 px-2">
-          <Story text={"도쿄"} />
-          <Story text={"블라디보스톡"} />
-          <Story text={"후쿠오카"} />
-          <Story text={"오사카"} />
-          <Story text={"신규"} isNew />
+          <SStory text={"신규"} isNew />
+          <SStory text={"무제"} />
         </div>
         <div className="w-full mt-3 py-2 flex justify-around border-t">
           <div className="flex flex-col items-center">
@@ -204,7 +189,7 @@ const Profile = ({
                         className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
                         style={{
                           backgroundImage: `url('${getBackgroundUrl(
-                            feed.imageUrl!
+                            feed.imageUrl.split(",")[0]
                           )}')`,
                         }}
                       ></div>
@@ -213,7 +198,7 @@ const Profile = ({
                 ))}
               </div>
             ) : (
-              <EmptyFeed key={tab.id} />
+              <EmptyFeed key={tab.id} isFeed={tab.isFeed} />
             );
           }
         })}

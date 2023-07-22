@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { BsChat, BsDot, BsThreeDots } from "react-icons/bs";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import {
   BsBookmark,
   BsBookmarkFill,
-  BsChat,
   BsHeart,
   BsHeartFill,
-  BsThreeDots,
 } from "react-icons/bs";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import Image from "next/image";
+import Link from "next/link";
 import useSWR from "swr";
 import useMutation from "@/lib/client/useMutation";
 import { convertTime, getBackgroundUrl } from "@/lib/client/utils";
-import Avatar from "@/components/Avatar";
 import { Feeds, ReplyWithUser } from "@/types";
 import { useForm } from "react-hook-form";
+import Avatar from "@/components/Avatar";
 import RepliesPopup from "../RepliesPopup";
 
 interface FeedProps {
@@ -95,12 +95,29 @@ const Feed = ({
     toggleBookmarkMutation({});
   };
 
+  const feedImageUrls = feed.imageUrl!.split(",");
+  const [feedImageIndex, setFeedImageIndex] = useState(0);
+
+  const handleImageIndex = (action: "left" | "right") => {
+    if (action === "left") {
+      setFeedImageIndex((prev) =>
+        prev === 0 ? feedImageUrls.length - 1 : prev - 1
+      );
+    } else {
+      setFeedImageIndex((prev) =>
+        prev === feedImageUrls.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
   return imageOnly ? (
     <Link key={feed.id} href={`/feed/${feed.id}`}>
       <div
         className="w-full h-30 aspect-square  bg-cover bg-no-repeat bg-center"
         style={{
-          backgroundImage: `url('${getBackgroundUrl(feed.imageUrl!)}')`,
+          backgroundImage: `url('${getBackgroundUrl(
+            feedImageUrls[feedImageIndex]
+          )}')`,
         }}
       ></div>
     </Link>
@@ -135,13 +152,44 @@ const Feed = ({
       <Link key={feed.id} href={`/feed/${feed.id}`}>
         <div className="h-96 border rounded-sm relative ">
           <Image
+            src={getBackgroundUrl(feedImageUrls[feedImageIndex])}
+            className="relative"
             alt="feed image"
-            src={getBackgroundUrl(feed.imageUrl!)}
-            fill
             quality={100}
-            priority
             sizes="100%"
+            priority
+            fill
           />
+          {includeReplyForm && feedImageUrls.length > 1 && (
+            <>
+              {feedImageIndex !== 0 && (
+                <button
+                  onClick={() => handleImageIndex("left")}
+                  className="absolute -mt-3 flex justify-center items-center bg-black bg-opacity-80 w-8 h-8 text-white aspect-square rounded-full left-3 top-1/2"
+                >
+                  <BsChevronLeft />
+                </button>
+              )}
+
+              {feedImageIndex + 1 !== feedImageUrls.length && (
+                <button
+                  onClick={() => handleImageIndex("right")}
+                  className="absolute -mt-3 flex justify-center items-center bg-black bg-opacity-80 w-8 h-8 text-white aspect-square rounded-full right-3 top-1/2"
+                >
+                  <BsChevronRight />
+                </button>
+              )}
+            </>
+          )}
+          {feedImageUrls.length > 1 && (
+            <div className="absolute w-full flex justify-center  bottom-0 z-50  left-0 right-0 ">
+              {feedImageUrls.map((url) => (
+                <div key={url}>
+                  <BsDot className="text-gray-100" size={25} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </Link>
 
@@ -166,6 +214,7 @@ const Feed = ({
               <IoPaperPlaneOutline className="w-6 h-6" />
             </button>
           </div>
+
           <div>
             <button onClick={toggleBookmarkStatus}>
               {feedData?.isBookmarked ? (
@@ -178,34 +227,36 @@ const Feed = ({
         </div>
       )}
 
-      {includeReplys && (
-        <>
-          <div className="w-full px-2 ">
-            <p className="text-sm font-semibold">
-              {`${feed.user.username}의 `}
-              <span className="text-gray-500 text-sm font-normal ">
-                {hasLongText && !textExpanded
-                  ? `${feed.text.slice(0, 20)}...`
-                  : feed.text}
-                {textExpanded && feed.text.slice(20)}
-              </span>
-            </p>
-            {hasLongText && !textExpanded && (
-              <p
-                className={`text-sm text-gray-800 cursor-pointer  ${
-                  textExpanded ? "hidden" : ""
-                }}`}
-                onClick={handleTextExpandClick}
-              >
-                더 보기
-              </p>
-            )}
+      <>
+        <div className="w-full px-2 ">
+          <p className="text-sm font-semibold">
+            {`${feed.user.username}`}
+            <span className="text-gray-500 text-sm font-normal ">
+              {hasLongText && !textExpanded
+                ? `${feed.text.slice(0, 20)}...`
+                : feed.text}
+              {textExpanded && feed.text.slice(20)}
+            </span>
+          </p>
+          {includeReplys && (
+            <>
+              {hasLongText && !textExpanded && (
+                <p
+                  className={`text-sm text-gray-800 cursor-pointer  ${
+                    textExpanded ? "hidden" : ""
+                  }}`}
+                  onClick={handleTextExpandClick}
+                >
+                  더 보기
+                </p>
+              )}
 
-            {feed.replies?.length > 0 && <RepliesPopup replies={replies} />}
-          </div>
-          <hr className="my-6" />
-        </>
-      )}
+              {feed.replies?.length > 0 && <RepliesPopup replies={replies} />}
+            </>
+          )}
+        </div>
+        <hr className="my-6" />
+      </>
 
       {includeReplyForm && (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full flex gap-3">

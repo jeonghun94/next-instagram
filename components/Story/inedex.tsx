@@ -1,11 +1,33 @@
 import { InstagramUser } from "@prisma/client";
 import Avatar from "../Avatar";
 import { FaPlus } from "react-icons/fa";
+import { AiOutlinePlus } from "react-icons/ai";
 
 interface StoryProps {
   user: InstagramUser;
   isMe?: boolean;
 }
+
+export const SStory = ({ text, isNew }: { text: string; isNew?: boolean }) => {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div
+        className={`${
+          isNew ? "bg-[#FAFAFA]" : ""
+        }  w-12 h-12 aspect-square border ring-1 ring-gray-300 ring-offset-1 rounded-full`}
+      >
+        {isNew && (
+          <div className="w-full h-full flex justify-center items-center">
+            <button type="button">
+              <AiOutlinePlus className="w-6 h-6 text-gray-400" />
+            </button>
+          </div>
+        )}
+      </div>
+      <p className="text-xs">{text}</p>
+    </div>
+  );
+};
 
 const Story = ({ user, isMe }: StoryProps) => {
   const handleClick = () => {
