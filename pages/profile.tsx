@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { NextPageContext } from "next";
 import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
@@ -12,6 +12,7 @@ import { withSsrSession } from "@/lib/server/withSession";
 import { getBackgroundUrl } from "@/lib/client/utils";
 import { FeedWithUser } from "@/types";
 import { InstagramUser } from "@prisma/client";
+import useMutation from "@/lib/client/useMutation";
 
 interface Feed {
   id: number;
@@ -30,7 +31,8 @@ interface ProfileProps {
   bookmarkFeeds: Feed[];
   likeFeeds: Feed[];
   feeds: Feed[];
-  isMe?: boolean;
+  isFollowing: boolean;
+  isMe: boolean;
   user: UserWithCount;
 }
 
@@ -38,11 +40,21 @@ const Profile = ({
   feeds,
   likeFeeds,
   bookmarkFeeds,
+  isFollowing,
   isMe,
   user,
 }: ProfileProps) => {
-  // const { user, isLoading } = useUser();
   const [activeTab, setActiveTab] = useState<string>("feed");
+  const [isFollowed, setIsFollowed] = useState<boolean>(isFollowing);
+  const [toggleFollow] = useMutation(`/api/user/following/${user.id}`);
+
+  const handleFollow = () => {
+    setIsFollowed((prev) => !prev);
+    toggleFollow({});
+  };
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+  };
 
   const getIcon = (IconComponent: React.ElementType, isActive: boolean) => (
     <IconComponent className={`w-4 h-4 ${isActive ? "text-[#0095F6]" : ""}`} />
@@ -65,18 +77,6 @@ const Profile = ({
       content: bookmarkFeeds,
     },
   ];
-
-  const handleTabClick = (tabId: string) => {
-    setActiveTab(tabId);
-  };
-
-  const renderLoadingState = () => {
-    return (
-      <div className="min-h-screen w-full flex justify-center items-center">
-        <h1>Loading</h1>
-      </div>
-    );
-  };
 
   const renderSubtitle = () => {
     return (
@@ -128,10 +128,6 @@ const Profile = ({
     );
   };
 
-  // if (isLoading) {
-  //   return renderLoadingState();
-  // }
-
   return (
     <Layout isHome={false} pageTitle="Profile" subTitle={renderSubtitle()}>
       <div>
@@ -139,21 +135,32 @@ const Profile = ({
           <Avatar user={user} size={"20"} textSize="3xl" />
           <div className="w-full flex flex-col gap-3">
             <p className="text-xl font-normal">{user.username}</p>
-            <Link
-              href="/edit-profile"
-              className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
-            >
-              {isMe ? "프로필 편집" : "팔로우"}
-            </Link>
+
+            {isMe ? (
+              <Link
+                href="/edit-profile"
+                className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
+              >
+                프로필 편집
+              </Link>
+            ) : (
+              <button
+                onClick={handleFollow}
+                className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
+              >
+                {isFollowed ? "팔로잉" : "팔로우"}
+              </button>
+            )}
           </div>
         </div>
         <div className="h-atuo mt-3 px-3">
           <p className="text-sm  font-semibold">{user.name}</p>
         </div>
         <div className="flex items-center gap-4 mt-5 px-2">
-          <Story text={"오사카"} />
-          <Story text={"후쿠오카"} />
           <Story text={"도쿄"} />
+          <Story text={"블라디보스톡"} />
+          <Story text={"후쿠오카"} />
+          <Story text={"오사카"} />
           <Story text={"신규"} isNew />
         </div>
         <div className="w-full mt-3 py-2 flex justify-around border-t">
@@ -222,6 +229,16 @@ export const getServerSideProps = withSsrSession(
     const userId = Number(req?.session.user?.id);
     const pathId = Number(query?.id);
     const isMe = !pathId ? true : pathId === userId ? true : false;
+    let isFollowing = false;
+
+    if (!userId) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
 
     const user = await client.instagramUser.findUnique({
       where: { id: pathId ? pathId : userId },
@@ -241,13 +258,16 @@ export const getServerSideProps = withSsrSession(
       },
     });
 
-    if (!userId) {
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false,
+    if (!isMe) {
+      const follow = await client.instagramFollows.findFirst({
+        where: {
+          followerId: userId,
+          followingId: pathId,
         },
-      };
+      });
+      if (follow) {
+        isFollowing = true;
+      }
     }
 
     const feeds = await client.instagramFeed.findMany({
@@ -260,7 +280,6 @@ export const getServerSideProps = withSsrSession(
 
     const likeFeeds = await client.instagramLike
       .findMany({
-        // where: { userId },
         where: { userId: pathId ? pathId : userId },
         select: {
           feed: {
@@ -280,7 +299,6 @@ export const getServerSideProps = withSsrSession(
 
     const bookmarkFeeds = await client.instagramBookMark
       .findMany({
-        // where: { userId },
         where: { userId: pathId ? pathId : userId },
         select: {
           feed: {
@@ -303,6 +321,7 @@ export const getServerSideProps = withSsrSession(
         bookmarkFeeds: JSON.parse(JSON.stringify(bookmarkFeeds)),
         likeFeeds: JSON.parse(JSON.stringify(likeFeeds)),
         feeds: JSON.parse(JSON.stringify(feeds)),
+        isFollowing,
         isMe,
         user,
       },

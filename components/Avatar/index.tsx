@@ -1,5 +1,4 @@
 import { User } from "@prisma/client";
-import Link from "next/link";
 
 interface PageProps {
   textSize: string;
