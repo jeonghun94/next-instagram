@@ -26,7 +26,12 @@ async function handler(
       user.password.substring(0, Math.floor(passwordLength / 2)) +
       "*".repeat(Math.ceil(passwordLength / 2));
 
-    return res.json({ ok: true, password: hiddenPassword });
+    return res.json({
+      ok: true,
+      result: user.isSocialUser
+        ? "해당 계정은 소셜 로그인으로 이용해 주세요!"
+        : `저장된 비밀번호는 ${hiddenPassword} 입니다.`,
+    });
   } catch (error) {
     return res.status(500).json({
       ok: false,

@@ -156,7 +156,7 @@ export const ModalOverlay = ({
                       <>
                         <button
                           onClick={() => handlePreviewImageIndex("left")}
-                          className="absolute flex justify-center items-center border  bg-black bg-opacity-80 w-8 h-8 text-white aspect-square rounded-full left-5"
+                          className="absolute flex justify-center items-center bg-black bg-opacity-80 w-8 h-8 text-white aspect-square rounded-full left-5"
                         >
                           <BsChevronLeft />
                         </button>

@@ -63,6 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           email: emailObj.email,
           name: userData.name,
           username: userData.login,
+          isSocialUser: true,
           password: "",
           color: randomColor().toUpperCase(),
         },

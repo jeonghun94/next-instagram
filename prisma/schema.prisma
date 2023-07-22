@@ -94,6 +94,7 @@ model InstagramUser {
   color         String?
   avatarUrl     String?
   backgroundUrl String?
+  isSocialUser  Boolean             @default(false)
   followers     InstagramFollows[]  @relation("followers")
   following     InstagramFollows[]  @relation("following")
   feeds         InstagramFeed[]

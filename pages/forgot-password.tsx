@@ -13,13 +13,13 @@ interface FormProps {
 interface MutationResult {
   ok: boolean;
   error: string;
-  password: string;
+  result: string;
 }
 
 export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState } = useForm<FormProps>();
-  const [password, { loading, data }] =
+  const [password, { data }] =
     useMutation<MutationResult>("/api/user/password");
 
   const onSubmit = async (formData: FormProps) => {
@@ -105,7 +105,7 @@ export default function ResetPassword() {
 
           {data && data.ok && (
             <p className="mt-3 -mb-7 text-xs text-red-500 font-semibold">
-              저장된 비밀번호는 {data.password} 입니다.
+              {data.result}
             </p>
           )}
 
