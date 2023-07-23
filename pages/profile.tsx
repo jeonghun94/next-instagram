@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { NextPageContext } from "next";
 import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
-import { InstagramUser } from "@prisma/client";
+import { InstagramFollows, InstagramUser } from "@prisma/client";
 import Layout from "@/components/Layout/MainLayout";
 import Avatar from "@/components/Avatar";
 import Feed from "@/components/Feed";
@@ -12,6 +12,7 @@ import { withSsrSession } from "@/lib/server/withSession";
 import useMutation from "@/lib/client/useMutation";
 import { getBackgroundUrl } from "@/lib/client/utils";
 import { MutationResponse } from "@/types";
+import { FollowsPopup } from "@/components/Popups";
 
 interface Feed {
   id: number;
@@ -19,11 +20,21 @@ interface Feed {
 }
 
 interface UserWithCount extends InstagramUser {
+  followers?: InstagramFollows[];
+  following?: InstagramFollows[];
+
   _count: {
     feeds?: number;
     followers: number;
     following: number;
   };
+}
+
+interface FollowsPros {
+  avatarUrl: string | null;
+  username: string;
+  color: string;
+  name: string;
 }
 
 interface ProfileProps {
@@ -33,6 +44,8 @@ interface ProfileProps {
   isFollowing: boolean;
   isMe: boolean;
   user: UserWithCount;
+  followers: FollowsPros[];
+  following: FollowsPros[];
 }
 
 const Profile = ({
@@ -42,6 +55,8 @@ const Profile = ({
   isFollowing,
   isMe,
   user,
+  followers,
+  following,
 }: ProfileProps) => {
   const [activeTab, setActiveTab] = useState<string>("feed");
   const [isFollowed, setIsFollowed] = useState<boolean>(isFollowing);
@@ -120,7 +135,7 @@ const Profile = ({
     <Layout isHome={false} pageTitle="Profile" subTitle={renderSubtitle()}>
       <div>
         <div className="w-full flex items-center gap-5 p-2">
-          <Avatar user={user} size={"20"} textSize="3xl" />
+          <Avatar user={user} size={"14"} textSize="3xl" />
           <div className="w-full flex flex-col gap-3">
             <p className="text-xl font-normal">{user.username}</p>
 
@@ -153,14 +168,8 @@ const Profile = ({
             <p className="text-sm text-gray-500">게시물</p>
             <p className="text-sm font-semibold">{user._count.feeds}</p>
           </div>
-          <div className="flex flex-col items-center">
-            <p className="text-sm text-gray-500">팔로워</p>
-            <p className="text-sm font-semibold">{user._count.following}</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <p className="text-sm text-gray-500">팔로잉</p>
-            <p className="text-sm font-semibold">{user._count.followers}</p>
-          </div>
+          <FollowsPopup content="followers" follows={following} />
+          <FollowsPopup content="following" follows={followers} />
         </div>
 
         <div className="w-full flex justify-around">
@@ -233,6 +242,30 @@ export const getServerSideProps = withSsrSession(
         name: true,
         avatarUrl: true,
         color: true,
+        followers: {
+          select: {
+            following: {
+              select: {
+                avatarUrl: true,
+                username: true,
+                name: true,
+                color: true,
+              },
+            },
+          },
+        },
+        following: {
+          select: {
+            follower: {
+              select: {
+                avatarUrl: true,
+                username: true,
+                color: true,
+                name: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             feeds: true,
@@ -242,6 +275,9 @@ export const getServerSideProps = withSsrSession(
         },
       },
     });
+
+    const followers = user?.followers?.map((item) => item.following);
+    const following = user?.following?.map((item) => item.follower);
 
     if (!isMe) {
       const follow = await client.instagramFollows.findFirst({
@@ -308,7 +344,9 @@ export const getServerSideProps = withSsrSession(
         feeds: JSON.parse(JSON.stringify(feeds)),
         isFollowing,
         isMe,
-        user,
+        user: JSON.parse(JSON.stringify(user)),
+        followers: JSON.parse(JSON.stringify(followers)),
+        following: JSON.parse(JSON.stringify(following)),
       },
     };
   }

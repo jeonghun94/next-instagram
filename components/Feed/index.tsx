@@ -16,7 +16,7 @@ import { convertTime, getBackgroundUrl } from "@/lib/client/utils";
 import { Feeds, ReplyWithUser } from "@/types";
 import { useForm } from "react-hook-form";
 import Avatar from "@/components/Avatar";
-import RepliesPopup from "../RepliesPopup";
+import { RepliesPopup } from "../Popups";
 
 interface FeedProps {
   includeUser?: boolean;
@@ -133,7 +133,7 @@ const Feed = ({
               <Avatar user={feed.user} size="10" textSize="xl" />
               <div>
                 <p className="text-sm font-semibold">
-                  {`${feed.user.username} `}
+                  {`${feed.user.username}  `}
                   <span className="text-gray-500 text-sm font-normal ">
                     {` • ${convertTime(feed.createdAt.toString())}`}
                   </span>
@@ -230,7 +230,7 @@ const Feed = ({
       <>
         <div className="w-full px-2 ">
           <p className="text-sm font-semibold">
-            {`${feed.user.username}`}
+            {`${feed.user.username} `}
             <span className="text-gray-500 text-sm font-normal ">
               {hasLongText && !textExpanded
                 ? `${feed.text.slice(0, 20)}...`
