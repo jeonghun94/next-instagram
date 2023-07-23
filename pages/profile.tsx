@@ -35,6 +35,7 @@ interface FollowsPros {
   username: string;
   color: string;
   name: string;
+  id: number;
 }
 
 interface ProfileProps {
@@ -248,8 +249,9 @@ export const getServerSideProps = withSsrSession(
               select: {
                 avatarUrl: true,
                 username: true,
-                name: true,
                 color: true,
+                name: true,
+                id: true,
               },
             },
           },
@@ -262,6 +264,7 @@ export const getServerSideProps = withSsrSession(
                 username: true,
                 color: true,
                 name: true,
+                id: true,
               },
             },
           },
