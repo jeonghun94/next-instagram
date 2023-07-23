@@ -153,7 +153,7 @@ const Feed = ({
         <div className="h-96 border rounded-sm relative ">
           <Image
             src={getBackgroundUrl(feedImageUrls[feedImageIndex])}
-            className="relative"
+            className="relative object-fill"
             alt="feed image"
             quality={100}
             sizes="100%"
@@ -182,7 +182,7 @@ const Feed = ({
             </>
           )}
           {!includeReplyForm && feedImageUrls.length > 1 && (
-            <div className="absolute w-full flex justify-center  bottom-0 z-50  left-0 right-0 ">
+            <div className="absolute w-full flex justify-center  bottom-0  left-0 right-0 ">
               {feedImageUrls.map((url) => (
                 <div key={url}>
                   <BsDot className="text-gray-100" size={25} />

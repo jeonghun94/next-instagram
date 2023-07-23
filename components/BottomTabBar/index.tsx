@@ -12,7 +12,7 @@ import {
 } from "react-icons/ai";
 import { BiUserCircle } from "react-icons/bi";
 import { CgAddR } from "react-icons/cg";
-import { ModalOverlay } from "../Layout/MainLayout";
+import FeedUploadForm from "../Feed/UploadForm";
 
 const BottomTabBar = () => {
   const router = useRouter();
@@ -38,31 +38,32 @@ const BottomTabBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 max-w-lg w-full m-auto flex justify-between items-center border-t bg-white px-10 py-3">
-      <Link href="/">{renderIcon("/", AiFillHome, AiOutlineHome)}</Link>
-      <Link href="/search">
-        {renderIcon("/search", AiFillCompass, AiOutlineCompass)}
-      </Link>
-      <button onClick={toggleModal}>
-        <CgAddR className="w-6 h-6" />
-      </button>
-
-      <Link href="/chat">
-        {renderIcon("/chat", IoPaperPlaneSharp, IoPaperPlaneOutline)}
-      </Link>
-
-      {user ? (
-        <Link href="/profile">
-          <Avatar size="7" user={user} textSize="sm" />
+    <>
+      <div className="fixed bottom-0 left-0 right-0 max-w-lg w-full m-auto flex justify-between items-center border-t bg-white px-10 py-3">
+        <Link href="/">{renderIcon("/", AiFillHome, AiOutlineHome)}</Link>
+        <Link href="/search">
+          {renderIcon("/search", AiFillCompass, AiOutlineCompass)}
         </Link>
-      ) : (
-        <Link href="/login">
-          <BiUserCircle className="w-7 h-7" />
-        </Link>
-      )}
+        <button onClick={toggleModal}>
+          <CgAddR className="w-6 h-6" />
+        </button>
 
-      <ModalOverlay isOpen={isOpen} onClose={toggleModal} />
-    </div>
+        <Link href="/chat">
+          {renderIcon("/chat", IoPaperPlaneSharp, IoPaperPlaneOutline)}
+        </Link>
+
+        {user ? (
+          <Link href="/profile">
+            <Avatar size="7" user={user} textSize="sm" />
+          </Link>
+        ) : (
+          <Link href="/login">
+            <BiUserCircle className="w-7 h-7" />
+          </Link>
+        )}
+      </div>
+      <FeedUploadForm isOpen={isOpen} onClose={toggleModal} />
+    </>
   );
 };
 

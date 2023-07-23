@@ -32,7 +32,7 @@ async function handler(
   } else {
     const { text, photoId } = req.body;
 
-    await client.instagramFeed.create({
+    const newFeed = await client.instagramFeed.create({
       data: {
         text,
         userId: Number(req.session.user?.id),
@@ -40,7 +40,7 @@ async function handler(
       },
     });
 
-    res.json({ ok: true });
+    res.json({ ok: true, feedId: newFeed.id });
   }
 }
 
