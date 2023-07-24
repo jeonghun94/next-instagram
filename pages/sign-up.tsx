@@ -6,6 +6,7 @@ import Layout from "../components/Layout/AuthLayout";
 import Head from "next/head";
 import { AiFillGithub } from "react-icons/ai";
 import Link from "next/link";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface IForm {
   email: string;
@@ -147,9 +148,12 @@ const Login = () => {
         <button
           className={`w-full p-1.5 mt-4 rounded-lg ${
             formState.isValid ? "bg-[#0095F6]" : "bg-[#67B5FA]"
-          }  text-white font-bold text-sm`}
+          } text-sm text-white font-bold  ${
+            loading && "cursor-not-allowed bg-opacity-70"
+          } `}
+          disabled={loading}
         >
-          가입
+          {loading ? <LoadingSpinner /> : "가입"}
         </button>
       </form>
     </Layout>
