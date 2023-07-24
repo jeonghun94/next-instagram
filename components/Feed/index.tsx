@@ -150,7 +150,7 @@ const Feed = ({
       )}
 
       <Link key={feed.id} href={`/feed/${feed.id}`}>
-        <div className="h-96 border rounded-sm relative ">
+        <div className="h-[30rem] border rounded-sm relative ">
           <Image
             src={getBackgroundUrl(feedImageUrls[feedImageIndex])}
             className="relative object-fill"
