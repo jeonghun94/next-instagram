@@ -7,26 +7,15 @@ import Head from "next/head";
 import { AiFillGithub } from "react-icons/ai";
 import Link from "next/link";
 import LoadingSpinner from "@/components/LoadingSpinner";
-
-interface IForm {
-  email: string;
-  name: string;
-  username: string;
-  password: string;
-}
-
-interface MutationResult {
-  ok: boolean;
-  error: string;
-}
+import { MutationResult, SignUpFormProps } from "@/types";
 
 const Login = () => {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
-  const { register, handleSubmit, formState } = useForm<IForm>();
+  const { register, handleSubmit, formState } = useForm<SignUpFormProps>();
   const [registerUser, { loading, data }] =
     useMutation<MutationResult>("/api/register");
-  const submitting = async (validForm: IForm) => {
+  const submitting = async (validForm: SignUpFormProps) => {
     if (loading) return;
     await registerUser(validForm);
   };
@@ -40,7 +29,7 @@ const Login = () => {
 
   useEffect(() => {
     if (data) {
-      data.ok ? router.push("/login") : setErrorWithTimeout(data.error);
+      data.ok ? router.push("/login") : setErrorWithTimeout(String(data.error));
     }
   }, [data]);
 

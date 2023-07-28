@@ -5,6 +5,7 @@ import { ReplyWithUser } from "@/types";
 import Avatar from "../Avatar";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { InstagramUser } from "@prisma/client";
 
 interface FollowsProps {
   avatarUrl: string | null;
@@ -18,7 +19,7 @@ interface RepliesPopupProps {
 }
 
 interface FollowsPopupProps {
-  follows: FollowsProps[];
+  follows: InstagramUser[];
   content: "following" | "followers";
 }
 

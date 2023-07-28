@@ -4,49 +4,38 @@ import { withSsrSession } from "@/lib/server/withSession";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { InstagramUser } from "@prisma/client";
 import useMutation from "@/lib/client/useMutation";
 import Layout from "@/components/Layout/MainLayout";
 import ErrorText from "@/components/error-text";
 import Avatar from "@/components/Avatar";
 import Image from "next/image";
 import LoadingLayout from "@/components/Layout/LoadingLayout";
+import {
+  EditProfileFormProps,
+  EditProfileProps,
+  MutationResult,
+} from "@/types";
 
-interface FormProps {
-  name: string;
-  password: string;
-  avatar: FileList;
-}
-
-interface MutationResult {
-  ok: boolean;
-  error: string;
-  password: string;
-}
-
-interface UserProps {
-  user: InstagramUser;
-}
-
-const EditProFile = ({ user }: UserProps) => {
+const EditProFile = ({ user }: EditProfileProps) => {
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const { register, handleSubmit, watch, formState } = useForm<FormProps>({
-    defaultValues: {
-      name: user.name,
-      password: user.password,
-    },
-  });
+  const { register, handleSubmit, watch, formState } =
+    useForm<EditProfileFormProps>({
+      defaultValues: {
+        password: user.password,
+        name: user.name,
+      },
+    });
 
   const avatar = watch("avatar");
   const [editProfile, { data }] = useMutation<MutationResult>(
     "/api/user/edit-profile"
   );
 
-  const onSubmit = async ({ avatar, name, password }: FormProps) => {
+  const onSubmit = async ({ avatar, name, password }: EditProfileFormProps) => {
     let newAvatarUrl = "";
     setLoading(true);
 

@@ -1,23 +1,13 @@
 import client from "@/lib/server/db";
 import { NextPageContext } from "next";
 import { withSsrSession } from "@/lib/server/withSession";
-import { InstagramUser } from "@prisma/client";
 import { FaFacebookMessenger } from "react-icons/fa";
 import { BiMessageAdd } from "react-icons/bi";
 import Avatar from "@/components/Avatar";
 import Layout from "@/components/Layout/MainLayout";
+import { ChatRoomProps } from "@/types";
 
-interface ChatProp {
-  id: number;
-  followerId: number;
-  followingId: number;
-  following: InstagramUser;
-}
-
-interface ChatProps {
-  followingUsers: ChatProp[];
-}
-const Chat = ({ followingUsers }: ChatProps) => {
+const Chat = ({ followingUsers }: ChatRoomProps) => {
   const handleSend = () => {
     return alert("서비스 준비중입니다.");
   };

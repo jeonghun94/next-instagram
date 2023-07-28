@@ -2,52 +2,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { NextPageContext } from "next";
 import { BsGrid3X3, BsBookmark, BsHeart, BsCamera } from "react-icons/bs";
-import { InstagramFollows, InstagramUser } from "@prisma/client";
 import Layout from "@/components/Layout/MainLayout";
 import Avatar from "@/components/Avatar";
-import Feed from "@/components/Feed";
 import { SStory } from "@/components/Story/inedex";
 import client from "@/lib/server/db";
 import { withSsrSession } from "@/lib/server/withSession";
 import useMutation from "@/lib/client/useMutation";
 import { getBackgroundUrl } from "@/lib/client/utils";
-import { MutationResponse } from "@/types";
+import { MutationResult, FeedLight, ProfileProps } from "@/types";
 import { FollowsPopup } from "@/components/Popups";
-
-interface Feed {
-  id: number;
-  imageUrl: string;
-}
-
-interface UserWithCount extends InstagramUser {
-  followers?: InstagramFollows[];
-  following?: InstagramFollows[];
-
-  _count: {
-    feeds?: number;
-    followers: number;
-    following: number;
-  };
-}
-
-interface FollowsPros {
-  avatarUrl: string | null;
-  username: string;
-  color: string;
-  name: string;
-  id: number;
-}
-
-interface ProfileProps {
-  bookmarkFeeds: Feed[];
-  likeFeeds: Feed[];
-  feeds: Feed[];
-  isFollowing: boolean;
-  isMe: boolean;
-  user: UserWithCount;
-  followers: FollowsPros[];
-  following: FollowsPros[];
-}
 
 const Profile = ({
   feeds,
@@ -61,7 +24,7 @@ const Profile = ({
 }: ProfileProps) => {
   const [activeTab, setActiveTab] = useState<string>("feed");
   const [isFollowed, setIsFollowed] = useState<boolean>(isFollowing);
-  const [toggleFollow] = useMutation<MutationResponse>(
+  const [toggleFollow] = useMutation<MutationResult>(
     `/api/user/following/${user.id}`
   );
 
@@ -167,7 +130,8 @@ const Profile = ({
         <div className="w-full mt-3 py-2 flex justify-around border-t">
           <div className="flex flex-col items-center">
             <p className="text-sm text-gray-500">게시물</p>
-            <p className="text-sm font-semibold">{user._count.feeds}</p>
+            {/* <p className="text-sm font-semibold">{user._count.feeds}</p> */}
+            <p className="text-sm font-semibold">{feeds.length}</p>
           </div>
           <FollowsPopup content="followers" follows={following} />
           <FollowsPopup content="following" follows={followers} />
@@ -192,14 +156,14 @@ const Profile = ({
           if (activeTab === tab.id) {
             return tab.content.length > 0 ? (
               <div key={tab.id} className="grid grid-cols-3">
-                {tab.content.map((feed: Feed) => (
+                {tab.content.map((feed: FeedLight) => (
                   <div key={feed.id} className="border-[0.5px]">
                     <Link href={`/feed/${feed.id}`}>
                       <div
                         className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
                         style={{
                           backgroundImage: `url('${getBackgroundUrl(
-                            feed.imageUrl.split(",")[0]
+                            feed.imageUrl!.split(",")[0]
                           )}')`,
                         }}
                       ></div>
@@ -245,28 +209,12 @@ export const getServerSideProps = withSsrSession(
         color: true,
         followers: {
           select: {
-            following: {
-              select: {
-                avatarUrl: true,
-                username: true,
-                color: true,
-                name: true,
-                id: true,
-              },
-            },
+            following: true,
           },
         },
         following: {
           select: {
-            follower: {
-              select: {
-                avatarUrl: true,
-                username: true,
-                color: true,
-                name: true,
-                id: true,
-              },
-            },
+            follower: true,
           },
         },
         _count: {
@@ -289,6 +237,7 @@ export const getServerSideProps = withSsrSession(
           followingId: pathId,
         },
       });
+
       if (follow) {
         isFollowing = true;
       }
@@ -342,14 +291,14 @@ export const getServerSideProps = withSsrSession(
 
     return {
       props: {
+        followers: JSON.parse(JSON.stringify(followers)),
+        following: JSON.parse(JSON.stringify(following)),
         bookmarkFeeds: JSON.parse(JSON.stringify(bookmarkFeeds)),
         likeFeeds: JSON.parse(JSON.stringify(likeFeeds)),
         feeds: JSON.parse(JSON.stringify(feeds)),
         isFollowing,
         isMe,
         user: JSON.parse(JSON.stringify(user)),
-        followers: JSON.parse(JSON.stringify(followers)),
-        following: JSON.parse(JSON.stringify(following)),
       },
     };
   }

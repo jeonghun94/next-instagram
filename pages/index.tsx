@@ -1,26 +1,13 @@
 import { withSsrSession } from "@/lib/server/withSession";
 import { NextPageContext } from "next";
 import client from "@/lib/server/db";
-import { Feeds } from "@/types";
+import { HomeProps } from "@/types";
 import Layout from "@/components/Layout/MainLayout";
 import Story from "@/components/Story/inedex";
 import Feed from "@/components/Feed";
-import { InstagramUser } from "@prisma/client";
 import useUser from "@/lib/client/useUser";
 
-interface FollowingUserInfo {
-  id: number;
-  followingId: number;
-  followerId: number;
-  following: InstagramUser;
-}
-
-interface FeedsProps {
-  feeds: Feeds[];
-  followingUsersInfo: FollowingUserInfo[];
-}
-
-const Home = ({ feeds, followingUsersInfo }: FeedsProps) => {
+const Home = ({ feeds, followingUsersInfo }: HomeProps) => {
   const { user, isLoading } = useUser();
 
   if (isLoading) return;

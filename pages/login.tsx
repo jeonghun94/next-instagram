@@ -6,23 +6,14 @@ import Link from "next/link";
 import Head from "next/head";
 import Layout from "@/components/Layout/AuthLayout";
 import LoadingSpinner from "@/components/LoadingSpinner";
-
-interface IForm {
-  email: string;
-  password: string;
-}
-
-interface MutationResult {
-  ok: boolean;
-  error: string;
-}
+import { LoginFormProps, MutationResult } from "@/types";
 
 const Login = () => {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
-  const { register, handleSubmit, formState } = useForm<IForm>();
+  const { register, handleSubmit, formState } = useForm<LoginFormProps>();
   const [login, { loading, data }] = useMutation<MutationResult>("/api/login");
-  const submitting = async (validForm: IForm) => {
+  const submitting = async (validForm: LoginFormProps) => {
     if (loading) return;
     await login(validForm);
   };
@@ -36,7 +27,7 @@ const Login = () => {
 
   useEffect(() => {
     if (data) {
-      data.ok ? router.push("/") : setErrorWithTimeout(data.error);
+      data.ok ? router.push("/") : setErrorWithTimeout(String(data.error));
     }
   }, [data]);
 

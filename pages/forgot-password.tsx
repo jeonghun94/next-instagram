@@ -5,24 +5,16 @@ import Layout from "../components/Layout/MainLayout";
 import Link from "next/link";
 import { IoLockClosedOutline } from "react-icons/io5";
 import ErrorText from "@/components/error-text";
+import { ForgotPasswordFormProps, MutationResult } from "@/types";
 
-interface FormProps {
-  email: string;
-}
-
-interface MutationResult {
-  ok: boolean;
-  error: string;
-  result: string;
-}
-
-export default function ResetPassword() {
+const ForgotPassword = () => {
   const [error, setError] = useState<string | null>(null);
-  const { register, handleSubmit, formState } = useForm<FormProps>();
+  const { register, handleSubmit, formState } =
+    useForm<ForgotPasswordFormProps>();
   const [password, { data }] =
     useMutation<MutationResult>("/api/user/password");
 
-  const onSubmit = async (formData: FormProps) => {
+  const onSubmit = async (formData: ForgotPasswordFormProps) => {
     await password(formData);
   };
 
@@ -38,7 +30,7 @@ export default function ResetPassword() {
       if (data.ok) {
         console.log(data, "data");
       } else {
-        setErrorWithTimeout(data.error);
+        setErrorWithTimeout(String(data.error));
       }
     }
   }, [data]);
@@ -120,4 +112,6 @@ export default function ResetPassword() {
       {error && <ErrorText error={error} />}
     </Layout>
   );
-}
+};
+
+export default ForgotPassword;

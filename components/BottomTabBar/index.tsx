@@ -48,8 +48,8 @@ const BottomTabBar = () => {
           <CgAddR className="w-6 h-6" />
         </button>
 
-        <Link href="/chat">
-          {renderIcon("/chat", IoPaperPlaneSharp, IoPaperPlaneOutline)}
+        <Link href="/chat-room">
+          {renderIcon("/chat-room", IoPaperPlaneSharp, IoPaperPlaneOutline)}
         </Link>
 
         {user ? (
