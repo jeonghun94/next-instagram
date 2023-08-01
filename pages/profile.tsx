@@ -11,6 +11,7 @@ import useMutation from "@/lib/client/useMutation";
 import { getBackgroundUrl } from "@/lib/client/utils";
 import { MutationResult, FeedLight, ProfileProps } from "@/types";
 import { FollowsPopup } from "@/components/Popups";
+import ROUTE_PATH from "@/constants/route";
 
 const Profile = ({
   feeds,
@@ -97,86 +98,84 @@ const Profile = ({
 
   return (
     <Layout isHome={false} pageTitle="Profile" subTitle={renderSubtitle()}>
-      <div>
-        <div className="w-full flex items-center gap-5 p-2">
-          <Avatar user={user} size={"14"} textSize="3xl" />
-          <div className="w-full flex flex-col gap-3">
-            <p className="text-xl font-normal">{user.username}</p>
+      <div className="w-full flex items-center gap-5 p-2">
+        <Avatar user={user} size={"14"} textSize="3xl" />
+        <div className="w-full flex flex-col gap-3">
+          <p className="text-xl font-normal">{user.username}</p>
 
-            {isMe ? (
-              <Link
-                href="/edit-profile"
-                className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
-              >
-                프로필 편집
-              </Link>
-            ) : (
-              <button
-                onClick={handleFollow}
-                className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
-              >
-                {isFollowed ? "팔로잉" : "팔로우"}
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="h-atuo mt-3 px-3">
-          <p className="text-sm  font-semibold">{user.name}</p>
-        </div>
-        <div className="flex items-center gap-4 mt-5 px-2">
-          <SStory text={"신규"} isNew />
-          <SStory text={"무제"} />
-        </div>
-        <div className="w-full mt-3 py-2 flex justify-around border-t">
-          <div className="flex flex-col items-center">
-            <p className="text-sm text-gray-500">게시물</p>
-            {/* <p className="text-sm font-semibold">{user._count.feeds}</p> */}
-            <p className="text-sm font-semibold">{feeds.length}</p>
-          </div>
-          <FollowsPopup content="followers" follows={following} />
-          <FollowsPopup content="following" follows={followers} />
-        </div>
-
-        <div className="w-full flex justify-around">
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              className={`flex flex-col items-center py-3  ${
-                activeTab === tab.id && "border-t"
-              } border-black w-full`}
+          {isMe ? (
+            <Link
+              href={`${ROUTE_PATH.EDIT_PROFILE}`}
+              className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
             >
-              <button key={tab.id} onClick={() => handleTabClick(tab.id)}>
-                {tab.icon(activeTab === tab.id)}
-              </button>
-            </div>
-          ))}
+              프로필 편집
+            </Link>
+          ) : (
+            <button
+              onClick={handleFollow}
+              className="w-3/5 flex py-1.5  items-center text-sm transition-all ease-in-out  bg-[#EFEFEF] justify-center rounded-lg font-bold hover:bg-[#DBDBDB]"
+            >
+              {isFollowed ? "팔로잉" : "팔로우"}
+            </button>
+          )}
         </div>
-
-        {tabs.map((tab) => {
-          if (activeTab === tab.id) {
-            return tab.content.length > 0 ? (
-              <div key={tab.id} className="grid grid-cols-3">
-                {tab.content.map((feed: FeedLight) => (
-                  <div key={feed.id} className="border-[0.5px]">
-                    <Link href={`/feed/${feed.id}`}>
-                      <div
-                        className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
-                        style={{
-                          backgroundImage: `url('${getBackgroundUrl(
-                            feed.imageUrl!.split(",")[0]
-                          )}')`,
-                        }}
-                      ></div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyFeed key={tab.id} isFeed={tab.isFeed} />
-            );
-          }
-        })}
       </div>
+      <div className="h-atuo mt-3 px-3">
+        <p className="text-sm  font-semibold">{user.name}</p>
+      </div>
+      <div className="flex items-center gap-4 mt-5 px-2">
+        <SStory text={"신규"} isNew />
+        <SStory text={"무제"} />
+      </div>
+      <div className="w-full mt-3 py-2 flex justify-around border-t">
+        <div className="flex flex-col items-center">
+          <p className="text-sm text-gray-500">게시물</p>
+          {/* <p className="text-sm font-semibold">{user._count.feeds}</p> */}
+          <p className="text-sm font-semibold">{feeds.length}</p>
+        </div>
+        <FollowsPopup content="followers" follows={following} />
+        <FollowsPopup content="following" follows={followers} />
+      </div>
+
+      <div className="w-full flex justify-around">
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            className={`flex flex-col items-center py-3  ${
+              activeTab === tab.id && "border-t"
+            } border-black w-full`}
+          >
+            <button key={tab.id} onClick={() => handleTabClick(tab.id)}>
+              {tab.icon(activeTab === tab.id)}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {tabs.map((tab) => {
+        if (activeTab === tab.id) {
+          return tab.content.length > 0 ? (
+            <div key={tab.id} className="grid grid-cols-3 mb-7">
+              {tab.content.map((feed: FeedLight) => (
+                <div key={feed.id} className="border-[0.5px]">
+                  <Link href={`${ROUTE_PATH.FEED}/${feed.id}`}>
+                    <div
+                      className="w-full h-30 aspect-square bg-cover bg-no-repeat bg-center"
+                      style={{
+                        backgroundImage: `url('${getBackgroundUrl(
+                          feed.imageUrl!.split(",")[0]
+                        )}')`,
+                      }}
+                    ></div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyFeed key={tab.id} isFeed={tab.isFeed} />
+          );
+        }
+      })}
     </Layout>
   );
 };
