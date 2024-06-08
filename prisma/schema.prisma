@@ -1,12 +1,11 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  // previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -28,13 +27,13 @@ model User {
 
 model Follows {
   id          Int  @id @default(autoincrement())
-  follower    User @relation("followers", fields: [followerId], references: [id])
   followerId  Int
-  following   User @relation("following", fields: [followingId], references: [id])
   followingId Int
+  follower    User @relation("followers", fields: [followerId], references: [id])
+  following   User @relation("following", fields: [followingId], references: [id])
 
-  @@index([followerId])
-  @@index([followingId])
+  @@index([followerId], map: "follows_followerId")
+  @@index([followingId], map: "follows_followingId")
 }
 
 model Tweet {
@@ -42,30 +41,30 @@ model Tweet {
   text        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id])
   userId      Int
-  createdBy   User     @relation("myTweets", fields: [createdById], references: [id])
   createdById Int
   imageUrl    String?
   views       Int      @default(0)
+  user        User     @relation(fields: [userId], references: [id])
+  createdBy   User     @relation("myTweets", fields: [createdById], references: [id])
   likes       Like[]
   replys      Reply[]
 
-  @@index([userId], name: "userId")
-  @@index([createdById], name: "createdById")
+  @@index([userId], map: "tweet_userId")
+  @@index([createdById], map: "tweet_createdById")
 }
 
 model Like {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  tweet     Tweet    @relation(fields: [tweetId], references: [id])
   tweetId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
 
-  @@index([userId], name: "userId")
-  @@index([tweetId], name: "tweetId")
+  @@index([userId], map: "like_userId")
+  @@index([tweetId], map: "like_tweetId")
 }
 
 model Reply {
@@ -73,16 +72,15 @@ model Reply {
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  tweet     Tweet    @relation(fields: [tweetId], references: [id])
   tweetId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  tweet     Tweet    @relation(fields: [tweetId], references: [id])
 
-  @@index([userId], name: "userId")
-  @@index([tweetId], name: "tweetId")
+  @@index([userId], map: "reply_userId")
+  @@index([tweetId], map: "reply_tweetId")
 }
 
-// pscale 유료버전 안 쓰기 위해서 같은 디비 사용
 model InstagramUser {
   id            Int                 @id @default(autoincrement())
   email         String              @unique
@@ -105,13 +103,13 @@ model InstagramUser {
 
 model InstagramFollows {
   id          Int           @id @default(autoincrement())
-  follower    InstagramUser @relation("followers", fields: [followerId], references: [id])
   followerId  Int
-  following   InstagramUser @relation("following", fields: [followingId], references: [id])
   followingId Int
+  follower    InstagramUser @relation("followers", fields: [followerId], references: [id])
+  following   InstagramUser @relation("following", fields: [followingId], references: [id])
 
-  @@index([followerId])
-  @@index([followingId])
+  @@index([followerId], map: "instagramFollows_followerId")
+  @@index([followingId], map: "instagramFollows_followingId")
 }
 
 model InstagramFeed {
@@ -119,29 +117,29 @@ model InstagramFeed {
   text      String
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
-  user      InstagramUser       @relation(fields: [userId], references: [id])
   userId    Int
   imageUrl  String?
   views     Int                 @default(0)
+  user      InstagramUser       @relation(fields: [userId], references: [id])
   likes     InstagramLike[]
   replies   InstagramReply[]
   bookmarks InstagramBookMark[]
 
-  @@index([userId], name: "userId")
-  @@fulltext([text])
+  @@index([userId], map: "instagramFeed_userId")
+  // @@fulltext([text])
 }
 
 model InstagramLike {
   id        Int           @id @default(autoincrement())
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  user      InstagramUser @relation(fields: [userId], references: [id])
   userId    Int
-  feed      InstagramFeed @relation(fields: [feedId], references: [id])
   feedId    Int
+  user      InstagramUser @relation(fields: [userId], references: [id])
+  feed      InstagramFeed @relation(fields: [feedId], references: [id])
 
-  @@index([userId], name: "userId")
-  @@index([feedId], name: "feedId")
+  @@index([userId], map: "instagramLike_userId")
+  @@index([feedId], map: "instagramLike_feedId")
 }
 
 model InstagramReply {
@@ -149,24 +147,48 @@ model InstagramReply {
   text      String
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  user      InstagramUser @relation(fields: [userId], references: [id])
   userId    Int
-  feed      InstagramFeed @relation(fields: [feedId], references: [id])
   feedId    Int
+  user      InstagramUser @relation(fields: [userId], references: [id])
+  feed      InstagramFeed @relation(fields: [feedId], references: [id])
 
-  @@index([userId], name: "userId")
-  @@index([feedId], name: "feedId")
+  @@index([userId], map: "instagramReply_userId")
+  @@index([feedId], map: "instagramReply_feedId")
 }
 
 model InstagramBookMark {
   id        Int           @id @default(autoincrement())
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  user      InstagramUser @relation(fields: [userId], references: [id])
   userId    Int
-  feed      InstagramFeed @relation(fields: [feedId], references: [id])
   feedId    Int
+  user      InstagramUser @relation(fields: [userId], references: [id])
+  feed      InstagramFeed @relation(fields: [feedId], references: [id])
 
-  @@index([userId], name: "userId")
-  @@index([feedId], name: "feedId")
+  @@index([userId], map: "instagramBookMark_userId")
+  @@index([feedId], map: "instagramBookMark_feedId")
 }
+
+// model FastEvent {
+//   id         Int                  @id @default(autoincrement())
+//   type       FastEvent_type
+//   orderState FastEvent_orderState
+//   startDate  String
+//   endDate    String
+//   createdAt  DateTime             @default(now())
+//   updatedAt  DateTime
+//   userId     Int
+
+//   @@index([userId], map: "fastEvent_userId")
+// }
+
+// model FastUser {
+//   id          Int      @id @default(autoincrement())
+//   username    String   @unique
+//   email       String   @unique
+//   password    String
+//   imageUrl    String?
+//   annualCount Int      @default(15)
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime
+// }
