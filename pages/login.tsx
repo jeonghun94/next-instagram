@@ -59,7 +59,21 @@ const Login = () => {
         onSubmit={handleSubmit(submitting)}
         className="w-full border p-4 px-8 flex flex-col items-center"
       >
-        <i className="my-8 w-[175px] h-[51px] inline-block bg-no-repeat bg-[url('https://static.cdninstagram.com/rsrc.php/v3/yK/r/ATdtiLb2BQ9.png')] bg-cover"></i>
+        <i 
+          role="img" 
+          aria-label="Instagram" 
+          style={{
+            backgroundImage: "url('https://static.cdninstagram.com/rsrc.php/v3/yh/r/IS7e616CiR2.png')",
+            backgroundPosition: '0px 0px',
+            backgroundSize: '176px 258px',
+            width: '175px',
+            height: '51px',
+            margin: '22px 0',
+            backgroundRepeat: 'no-repeat',
+            display: 'inline-block'
+          }} 
+        />
+
         <div className="w-full flex flex-col gap-2 ">
           <label htmlFor="email">
             <input
